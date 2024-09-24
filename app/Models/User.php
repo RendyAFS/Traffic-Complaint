@@ -19,7 +19,10 @@ class User extends Authenticatable
      */
     protected $fillable = [
         'name',
+        'level',
+        'no_hp',
         'email',
+        'email_verified_at',
         'password',
     ];
 
@@ -41,4 +44,8 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    public function compalints(){
+        return $this->hasMany(Complaint::class);
+    }
 }
