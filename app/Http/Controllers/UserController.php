@@ -3,9 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\Complaint;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Yajra\DataTables\DataTables;
 
 
 class UserController extends Controller
@@ -20,28 +20,60 @@ class UserController extends Controller
         return view('page-user.index', compact('title'));
     }
 
+    public function uploadGambar(Request $request)
+    {
+        // Validasi file gambar
+        $request->validate([
+            'gambar' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
+        ]);
+
+        // Simpan file ke folder 'file-gambar' di storage publik
+        if ($request->hasFile('gambar')) {
+            $user = Auth::user();
+            $file = $request->file('gambar');
+            $originalName = $file->getClientOriginalName();
+
+            // Buat nama file dengan format: id-user-email_user-nama_gambar.ext
+            $filename = $user->id . '-' . $user->email . '_' . $user->name .  '_' .  $originalName;
+
+            $file->storeAs('file-gambar', $filename, 'public');
+
+            // Store filename in session
+            session(['uploaded_image' => $filename]);
+
+            // Simpan file ke folder 'file-gambar' di disk 'public'
+
+            return response()->json(['filename' => $filename]);
+        }
+
+        return response()->json(['error' => 'Gagal upload file'], 400);
+    }
+
+    // Method untuk simpan aduan
     public function formComplaint(Request $request)
     {
         $request->validate([
             'text-complaint' => 'required|string|max:255',
-            'file-gambar' => 'nullable|image|mimes:png,jpg,jpeg|max:2048',
+            'gambar' => 'nullable|string',
         ]);
 
-        $gambarPath = null;
-        if ($request->hasFile('file-gambar')) {
-            $gambarPath = $request->file('file-gambar')->store('uploads', 'public');
-        }
+        // Ambil nama file dari session
+        $filename = session('uploaded_image');
 
         Complaint::create([
             'users_id' => Auth::id(),
             'text_complaint' => $request->input('text-complaint'),
-            'type_complaint' => $this->getRandomComplaintType(), // Method untuk mendapatkan tipe acak
+            'type_complaint' => $this->getRandomComplaintType(), // Fungsi untuk mendapatkan tipe aduan secara acak
             'status' => 'Belum Selesai',
-            'gambar' => $gambarPath,
+            'gambar' => $filename, // Gunakan nama file dari session
         ]);
+
+        // Hapus session setelah disimpan
+        session()->forget('uploaded_image');
 
         return redirect()->back()->with('success-upload', 'Aduan berhasil disimpan!');
     }
+
 
     private function getRandomComplaintType()
     {
@@ -51,7 +83,7 @@ class UserController extends Controller
 
     public function getDataRiwayat(Request $request)
     {
-        $query = Complaint::where('users_id', Auth::id())->latest();
+        $query = Complaint::where('users_id', Auth::id())->orderBy('created_at', 'asc');
 
         return datatables()->of($query)
             ->addColumn('no', function ($row) {
@@ -59,12 +91,13 @@ class UserController extends Controller
                 return $counter++;
             })
             ->addColumn('gambar', function ($row) {
-                if ($row->gambar) {
-                    return '<img src="' . asset('storage/' . $row->gambar) . '" width="100">';
-                }
-                return 'Tidak ada gambar';
+                // Mengembalikan nama file gambar jika ada
+                return $row->gambar;
             })
-            ->rawColumns(['gambar'])
+            ->editColumn('created_at', function ($row) {
+                // Kembalikan data 'created_at' mentah
+                return $row->created_at;
+            })
             ->make(true);
     }
 }
