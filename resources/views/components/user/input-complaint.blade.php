@@ -6,10 +6,12 @@
             <textarea class="form-control" id="text-complaint" name="text-complaint" rows="3" required></textarea>
         </div>
 
-        <label for="file-gambar" class="form-label fw-bold">Masukkan Media
-            <span class="text-grey fw-normal fst-italic">(png, jpg, jpeg)</span>
-        </label>
-        <input type="file" id="file-gambar" name="file-gambar" />
+        <div class="mb-3">
+            <label for="gambar" class="form-label fw-bold">Masukkan Media
+                <span class="text-grey fw-normal fst-italic">(png, jpg, jpeg)</span>
+            </label>
+            <input type="file" id="gambar" name="gambar" />
+        </div>
 
         <div class="d-flex justify-content-center">
             <button type="reset" class="btn btn-danger me-2">Reset</button>
@@ -17,3 +19,32 @@
         </div>
     </div>
 </form>
+
+<!-- Script FilePond -->
+<script type="module">
+    // Register FilePond plugins
+    FilePond.registerPlugin(FilePondPluginImagePreview);
+
+    // FilePond instance for image upload
+    const inputElement = document.querySelector('input[type="file"]');
+    const pond = FilePond.create(inputElement);
+
+    // Configure FilePond to handle server upload
+    pond.setOptions({
+        server: {
+            process: {
+                url: '{{ route('upload.gambar.user') }}', // Route to handle image upload
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}' // CSRF token for security
+                },
+                onload: (response) => {
+                    console.log('File uploaded successfully:', response);
+                },
+                onerror: (error) => {
+                    console.error('Error during upload:', error);
+                }
+            }
+        }
+    });
+</script>
