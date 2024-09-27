@@ -57,7 +57,7 @@
         processing: true,
         serverSide: true,
         responsive: true,
-        ajax: '{{ route('getDataComplaint') }}',
+        ajax: '{{ route('getDataDoneComplaint') }}',
         columns: [{
                 data: 'no',
                 name: 'no',

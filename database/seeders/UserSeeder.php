@@ -21,23 +21,22 @@ class UserSeeder extends Seeder
                 'email' => 's@s',
                 'email_verified_at' => now(),
                 'password' => bcrypt('qawsedrf'),
-            ],
-            [
-                'name' => 'User1',
-                'level' => 'User',
-                'no_hp' => '089966851111',
-                'email' => 'u1@u1',
-                'email_verified_at' => now(),
-                'password' => bcrypt('qawsedrf'),
-            ],
-            [
-                'name' => 'User2',
-                'level' => 'User',
-                'no_hp' => '089966851111',
-                'email' => 'u2@u2',
-                'email_verified_at' => now(),
-                'password' => bcrypt('qawsedrf'),
-            ],
+            ]
         ]);
+        // Create Users from User1 to User10
+        $users = [];
+        for ($i = 1; $i <= 10; $i++) {
+            $users[] = [
+                'name' => 'User ' . $i,
+                'level' => 'User',
+                'no_hp' => '08996685000' . $i,
+                'email' => 'u' . $i . '@u' . $i,
+                'email_verified_at' => now(),
+                'password' => bcrypt('qawsedrf'),
+            ];
+        }
+
+        // Insert all users at once
+        DB::table('users')->insert($users);
     }
 }

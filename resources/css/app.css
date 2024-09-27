@@ -15,27 +15,52 @@
 
 
 
-.warp-container{
+.warp-container {
     height: 100vh;
     display: flex;
     align-items: center;
 }
 
-.card{
+.card-auth {
     border: solid 2px var(--secondary-color);
-    border-radius: 1rem;
     background: var(--white-soft-color);
+    border-radius: 1rem;
 }
 
-.bg-secondary{
+.card-body1 {
+    background-image: url('/public/storage/assets/bus-1.png');
+    background-size: cover;
+    background-position: center;
+    height: 35rem;
+    border-radius: 0.89rem;
+}
+
+.bg-secondary {
     background: var(--secondary-color);
 }
 
-.card-body1{
-    background-image: url("{{ asset('storage/assets/bus-1.png') }}");
-}
-
-.form-login{
+.form-auth {
     background: var(--secondary-color);
     border-radius: 1rem;
+}
+
+.text-registrasi {
+    position: relative;
+    text-decoration: none;
+    transition: color 0.5s;
+}
+
+.text-registrasi::after {
+    content: '';
+    position: absolute;
+    width: 0;
+    height: 2px;
+    bottom: 0;
+    left: 0;
+    background-color: black;
+    transition: width 0.5s ease;
+}
+
+.text-registrasi:hover::after {
+    width: 100%;
 }

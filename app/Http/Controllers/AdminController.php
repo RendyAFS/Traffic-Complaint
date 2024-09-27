@@ -14,6 +14,7 @@ class AdminController extends Controller
         $this->middleware('auth');
     }
 
+    // Index
     public function index()
     {
         $title = 'Admin';
@@ -33,15 +34,27 @@ class AdminController extends Controller
             $file = $request->file('gambar');
             $originalName = $file->getClientOriginalName();
 
-            // Buat nama file dengan format: id-user-email_user-nama_gambar.ext
-            $filename = $user->id . '-' . $user->email . '_' . $user->name .  '_' .  $originalName;
+            // Fungsi untuk menghasilkan kode acak 11 karakter
+            $randomCode = '';
+            $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+            $charactersLength = strlen($characters);
 
-            $file->storeAs('file-gambar', $filename, 'public');
+            // Menghasilkan kode acak
+            for ($i = 0; $i < 11; $i++) {
+                $randomCode .= $characters[rand(0, $charactersLength - 1)];
+            }
 
-            // Store filename in session
+            // Buat nama file dengan format: id-user-email_user-randomCode-nama_gambar.ext
+            $filename = $user->id . '-' . $user->email . '_' . $user->name . '_' . $randomCode . '_' . $originalName;
+
+            try {
+                $file->storeAs('file-gambar', $filename, 'public');
+            } catch (\Exception $e) {
+                return response()->json(['error' => 'Gagal upload file: ' . $e->getMessage()], 500);
+            }
+
+            // Simpan nama file di session
             session(['uploaded_image' => $filename]);
-
-            // Simpan file ke folder 'file-gambar' di disk 'public'
 
             return response()->json(['filename' => $filename]);
         }
@@ -49,11 +62,7 @@ class AdminController extends Controller
         return response()->json(['error' => 'Gagal upload file'], 400);
     }
 
-    private function getRandomComplaintType()
-    {
-        $types = ['tidak urgent', 'kurang urgent', 'urgent', 'sangat urgent'];
-        return $types[array_rand($types)];
-    }
+
 
     public function formComplaint(Request $request)
     {
@@ -77,6 +86,12 @@ class AdminController extends Controller
         session()->forget('uploaded_image');
 
         return redirect()->back()->with('success-upload', 'Aduan berhasil disimpan!');
+    }
+
+    private function getRandomComplaintType()
+    {
+        $types = ['tidak urgent', 'kurang urgent', 'urgent', 'sangat urgent'];
+        return $types[array_rand($types)];
     }
 
     public function updateStatus(Request $request)
@@ -108,7 +123,48 @@ class AdminController extends Controller
             WHEN type_complaint = 'kurang urgent' THEN 3
             WHEN type_complaint = 'tidak urgent' THEN 4
             ELSE 5 END")
-            ->orderBy('created_at', 'desc');
+            ->where('status', 'Belum Selesai')
+            ->orderBy('created_at', 'asc');
+
+        return datatables()->of($query)
+            ->addColumn('no', function ($row) {
+                static $counter = 1;
+                return $counter++;
+            })
+            ->addColumn('status', function ($row) {
+                // Mengembalikan status mentah untuk di-render di frontend
+                return $row->status;
+            })
+            ->addColumn('gambar', function ($row) {
+                // Mengembalikan nama file gambar jika ada
+                return $row->gambar;
+            })
+            ->editColumn('created_at', function ($row) {
+                // Kembalikan data 'created_at' mentah
+                return $row->created_at;
+            })
+            ->make(true);
+    }
+
+    // Index Done Complaint
+    public function indexDoneComplaint()
+    {
+        $title = 'Done Complaint';
+        return view('page-admin.done-complaint', compact('title'));
+    }
+
+    public function getDataDoneComplaint(Request $request)
+    {
+        // Query dengan urutan prioritas pada 'type_complaint'
+        $query = Complaint::with('user')
+            ->orderByRaw("CASE
+            WHEN type_complaint = 'sangat urgent' THEN 1
+            WHEN type_complaint = 'urgent' THEN 2
+            WHEN type_complaint = 'kurang urgent' THEN 3
+            WHEN type_complaint = 'tidak urgent' THEN 4
+            ELSE 5 END")
+            ->where('status', 'Selesai')
+            ->orderBy('created_at', 'asc');
 
         return datatables()->of($query)
             ->addColumn('no', function ($row) {

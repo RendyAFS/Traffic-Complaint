@@ -25,7 +25,9 @@
             Swal.fire({
                 icon: 'success',
                 title: 'Berhasil Upload',
-                text: '{{ session('success-upload') }}', // Gunakan key yang sama
+                text: '{{ session('success-upload') }}',
+                confirmButtonText: 'OK',
+                confirmButtonColor: '#0D2454'
             });
         @endif
     </script>
