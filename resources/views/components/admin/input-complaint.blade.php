@@ -14,7 +14,7 @@
         </div>
 
         <div class="d-flex justify-content-center">
-            <button type="reset" class="btn btn-danger me-2">Reset</button>
+            <a href="{{route('user.index')}}" class="btn btn-danger me-2">Reset</a>
             <button type="submit" class="btn btn-success">Simpan</button>
         </div>
     </div>

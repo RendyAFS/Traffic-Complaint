@@ -1,5 +1,5 @@
 <nav class="navbar navbar-expand-md navbar-light bg-white shadow-sm">
-    <div class="container">
+    <div class="container py-2">
         <a class="navbar-brand" href="{{ url('/') }}">
             Traffic Complaint
         </a>
@@ -13,7 +13,6 @@
             <ul class="navbar-nav me-auto">
 
             </ul>
-
             <!-- Right Side Of Navbar -->
             <ul class="navbar-nav ms-auto">
                 <!-- Authentication Links -->

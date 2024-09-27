@@ -28,16 +28,14 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <!-- Scripts -->
-    @vite(['resources/sass/app.scss'])
+    @vite(['resources/sass/app.scss', 'resources/css/app.css'])
 </head>
 
 <body>
     <div id="app">
         @include('components.navbar')
 
-        <main class="py-4">
-            @yield('content')
-        </main>
+        @yield('content')
 
         @include('components.footer')
     </div>
