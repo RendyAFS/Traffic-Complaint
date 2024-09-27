@@ -14,28 +14,6 @@
 }
 
 
-
-.warp-container{
-    height: 100vh;
-    display: flex;
-    align-items: center;
-}
-
-.card{
-    border: solid 2px var(--secondary-color);
-    border-radius: 1rem;
-    background: var(--white-soft-color);
-}
-
-.bg-secondary{
-    background: var(--secondary-color);
-}
-
-.card-body1{
-    background-image: url("{{ asset('storage/assets/bus-1.png') }}");
-}
-
-.form-login{
-    background: var(--secondary-color);
-    border-radius: 1rem;
+.font-primary{
+    color: var(--primary-color);
 }
