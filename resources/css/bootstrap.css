@@ -7,8 +7,9 @@
     --white-soft-color: #EBF2FF;
     --bg-loading-color: rgb(255, 255, 255, 0.9);
     --dark-color: #1a1a1a;
-    --green-color: #005e43;
-    --blue-color: #00467a;
+    --red-color: #db5858;
+    --green-color: #58db63;
+    --blue-color: #5870db;
     --yellow-color: #FFCE20;
     --background-color: linear-gradient(to right, #0D2454, #0842B9, #9DBDFF);
 }
@@ -16,4 +17,48 @@
 
 .font-primary{
     color: var(--primary-color);
+}
+.font-white{
+    color: var(--white-color);
+}
+
+.btnc-primary{
+    background-color: var(--primary-color);
+    color: var(--white-color);
+    border-radius: 0.7rem;
+    transition: 0.3s;
+}
+.btnc-primary:hover{
+    background-color: var(--dark-color);
+    color: var(--white-color);
+}
+.btnc-green{
+    background-color: var(--green-color);
+    color: var(--white-color);
+    border-radius: 0.7rem;
+    transition: 0.3s;
+}
+.btnc-green:hover{
+    background-color: var(--dark-color);
+    color: var(--white-color);
+}
+.btnc-red{
+    background-color: var(--red-color);
+    color: var(--white-color);
+    border-radius: 0.7rem;
+    transition: 0.3s;
+}
+.btnc-red:hover{
+    background-color: var(--dark-color);
+    color: var(--white-color);
+}
+.btnc-blue{
+    background-color: var(--blue-color);
+    color: var(--white-color);
+    border-radius: 0.7rem;
+    transition: 0.3s;
+}
+.btnc-blue:hover{
+    background-color: var(--dark-color);
+    color: var(--white-color);
 }

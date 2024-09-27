@@ -33,15 +33,27 @@ class UserController extends Controller
             $file = $request->file('gambar');
             $originalName = $file->getClientOriginalName();
 
-            // Buat nama file dengan format: id-user-email_user-nama_gambar.ext
-            $filename = $user->id . '-' . $user->email . '_' . $user->name .  '_' .  $originalName;
+            // Fungsi untuk menghasilkan kode acak 11 karakter
+            $randomCode = '';
+            $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+            $charactersLength = strlen($characters);
 
-            $file->storeAs('file-gambar', $filename, 'public');
+            // Menghasilkan kode acak
+            for ($i = 0; $i < 11; $i++) {
+                $randomCode .= $characters[rand(0, $charactersLength - 1)];
+            }
 
-            // Store filename in session
+            // Buat nama file dengan format: id-user-email_user-randomCode-nama_gambar.ext
+            $filename = $user->id . '-' . $user->email . '_' . $user->name . '_' . $randomCode . '_' . $originalName;
+
+            try {
+                $file->storeAs('file-gambar', $filename, 'public');
+            } catch (\Exception $e) {
+                return response()->json(['error' => 'Gagal upload file: ' . $e->getMessage()], 500);
+            }
+
+            // Simpan nama file di session
             session(['uploaded_image' => $filename]);
-
-            // Simpan file ke folder 'file-gambar' di disk 'public'
 
             return response()->json(['filename' => $filename]);
         }

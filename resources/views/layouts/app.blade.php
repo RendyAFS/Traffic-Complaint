@@ -22,13 +22,14 @@
     <link rel="stylesheet" href="https://cdn.datatables.net/2.1.7/css/dataTables.bootstrap5.css">
     <link rel="stylesheet" href="https://cdn.datatables.net/responsive/3.0.3/css/responsive.bootstrap5.css">
 
-
+    {{-- AOS --}}
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
 
     {{-- Sweet Alert --}}
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <!-- Scripts -->
-    @vite(['resources/sass/app.scss', 'resources/css/app.css'])
+    @vite(['resources/sass/app.scss', 'resources/css/app.css', 'resources/css/bootstrap.css'])
 </head>
 
 <body>
@@ -41,6 +42,9 @@
     </div>
     @include('components.sessionAccess')
     @stack('scripts')
+
+    {{-- AOS --}}
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
 
     {{-- Filepond --}}
     <script src="https://unpkg.com/filepond@^4/dist/filepond.js"></script>
@@ -57,5 +61,8 @@
     <script src="https://cdn.datatables.net/responsive/3.0.3/js/responsive.bootstrap5.js"></script>
 
 </body>
+<script>
+    AOS.init();
+</script>
 
 </html>

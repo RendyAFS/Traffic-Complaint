@@ -4,6 +4,8 @@
             icon: 'warning',
             title: 'Akses Ditolak',
             text: '{{ session('message') }}',
+            confirmButtonText: 'OK',
+            confirmButtonColor: '#0D2454'
         });
     @endif
 </script>

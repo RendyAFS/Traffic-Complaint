@@ -13,6 +13,9 @@
     {{-- Sweet Alert --}}
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
+    {{-- AOS --}}
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+
     <!-- Scripts -->
     @vite(['resources/sass/app.scss', 'resources/css/app.css', 'resources/css/bootstrap.css'])
 </head>
@@ -24,6 +27,12 @@
     @include('components.sessionAccess')
     @stack('scripts')
 
+    {{-- AOS --}}
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+
 </body>
+<script>
+    AOS.init();
+</script>
 
 </html>

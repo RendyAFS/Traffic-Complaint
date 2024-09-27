@@ -1,4 +1,4 @@
-<form action="{{ route('form-complaint-user') }}" method="POST" enctype="multipart/form-data">
+<form action="{{ route('form.complaint.user') }}" method="POST" enctype="multipart/form-data">
     @csrf
     <div class="card px-4 py-4 border-0 shadow-sm">
         <div class="mb-3">
@@ -10,12 +10,12 @@
             <label for="gambar" class="form-label fw-bold">Masukkan Media
                 <span class="text-grey fw-normal fst-italic">(png, jpg, jpeg)</span>
             </label>
-            <input type="file" id="gambar" name="gambar" />
+            <input type="file" id="fileGambar" name="gambar" />
         </div>
 
         <div class="d-flex justify-content-center">
-            <a href="{{route('user.index')}}" class="btn btn-danger me-2">Reset</a>
-            <button type="submit" class="btn btn-success">Simpan</button>
+            <a href="{{route('user.index')}}" class="btn btnc-red me-2"><i class="bi bi-x-circle-fill"></i> Reset</a>
+            <button type="submit" class="btn btnc-green"><i class="bi bi-floppy-fill"></i> Simpan</button>
         </div>
     </div>
 </form>
@@ -26,7 +26,7 @@
     FilePond.registerPlugin(FilePondPluginImagePreview);
 
     // FilePond instance for image upload
-    const inputElement = document.querySelector('input[type="file"]');
+    const inputElement = document.getElementById('fileGambar');
     const pond = FilePond.create(inputElement);
 
     // Configure FilePond to handle server upload
