@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
-    <div class="container">
+    <div class="container py-4">
         <div class="mb-4">
             <div class="mb-3">
                 <span class="fs-3 fw-bold">Input Data Aduan</span>
