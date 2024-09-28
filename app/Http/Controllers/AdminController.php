@@ -6,6 +6,8 @@ use App\Models\Complaint;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Maatwebsite\Excel\Facades\Excel;
+use App\Imports\ComplaintsImport;
 
 class AdminController extends Controller
 {
@@ -68,6 +70,7 @@ class AdminController extends Controller
     {
         $request->validate([
             'text-complaint' => 'required|string|max:255',
+            'lokasi' => 'required|string|max:255',
             'gambar' => 'nullable|string',
         ]);
 
@@ -78,6 +81,7 @@ class AdminController extends Controller
             'users_id' => Auth::id(),
             'text_complaint' => $request->input('text-complaint'),
             'type_complaint' => $this->getRandomComplaintType(), // Fungsi untuk mendapatkan tipe aduan secara acak
+            'lokasi' => $request->input('lokasi'),
             'status' => 'Belum Selesai',
             'gambar' => $filename, // Gunakan nama file dari session
         ]);
@@ -111,6 +115,29 @@ class AdminController extends Controller
             'redirect' => route('admin.index'), // Mengembalikan URL untuk redirect
         ]);
     }
+
+    public function uploadFileAduan(Request $request)
+    {
+        // Validasi file Excel
+        $request->validate([
+            'fileTemplateAduan' => 'required|file|mimes:xlsx,xls|max:2048',
+        ]);
+
+        if ($request->hasFile('fileTemplateAduan')) {
+            $file = $request->file('fileTemplateAduan');
+
+            try {
+                // Import data dari file Excel ke database
+                Excel::import(new ComplaintsImport, $file);
+                return response()->json(['success' => 'File imported successfully!']);
+            } catch (\Exception $e) {
+                return response()->json(['error' => 'Gagal mengimpor file: ' . $e->getMessage()], 500);
+            }
+        }
+
+        return response()->json(['error' => 'Tidak ada file yang diupload'], 400);
+    }
+
 
 
     public function getDataComplaint(Request $request)

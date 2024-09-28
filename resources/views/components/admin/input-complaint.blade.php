@@ -7,6 +7,11 @@
         </div>
 
         <div class="mb-3">
+            <label for="lokasi" class="form-label fw-bold">Masukkan Lokasi</label>
+            <input class="form-control" id="lokasi" name="lokasi" rows="3" required></input>
+        </div>
+
+        <div class="mb-3">
             <label for="gambar" class="form-label fw-bold">Masukkan Media
                 <span class="text-grey fw-normal fst-italic">(png, jpg, jpeg)</span>
             </label>

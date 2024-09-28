@@ -4,6 +4,7 @@
             <tr>
                 <th>No.</th>
                 <th class="align-middle">Nama</th>
+                <th class="align-middle">Lokasi</th>
                 <th class="align-middle">Aduan</th>
                 <th class="align-middle text-center">Jenis Aduan</th>
                 <th class="align-middle text-center">Skala Prioritas</th>
@@ -69,6 +70,11 @@
                 className: 'align-middle'
             },
             {
+                data: 'lokasi',
+                name: 'lokasi',
+                className: 'align-middle'
+            },
+            {
                 data: 'text_complaint',
                 name: 'text_complaint',
                 className: 'align-middle'
@@ -76,7 +82,20 @@
             {
                 data: 'type_complaint',
                 name: 'type_complaint',
-                className: 'align-middle text-center'
+                className: 'align-middle text-center',
+                render: function(data, type, row) {
+                    if (data === 'sangat urgent') {
+                        return '<span class="badge text-bgc-red">Sangat Urgent</span>';
+                    } else if (data === 'urgent') {
+                        return '<span class="badge text-bgc-yellow">Urgent</span>';
+                    } else if (data === 'kurang urgent') {
+                        return '<span class="badge text-bgc-blue">Kurang Urgent</span>';
+                    } else if (data === 'tidak urgent') {
+                        return '<span class="badge text-bgc-green">Tidak Urgent</span>';
+                    } else {
+                        return data; // Untuk nilai lain, tampilkan data apa adanya
+                    }
+                }
             },
             {
                 data: 'type_complaint',
