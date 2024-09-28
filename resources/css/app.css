@@ -64,3 +64,10 @@
 .text-registrasi:hover::after {
     width: 100%;
 }
+
+.navbar-brand {
+    background: var(--background-color);
+    border-radius: 1rem;
+    padding-left: 1rem;
+    padding-right: 1rem;
+}

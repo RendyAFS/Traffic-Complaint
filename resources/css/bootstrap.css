@@ -21,6 +21,9 @@
 .font-white{
     color: var(--white-color);
 }
+.font-dark{
+    color: var(--dark-color);
+}
 
 .btnc-primary{
     background-color: var(--primary-color);
@@ -61,4 +64,8 @@
 .btnc-blue:hover{
     background-color: var(--dark-color);
     color: var(--white-color);
+}
+
+.bgc-primary{
+    background-color: var(--primary-color);
 }

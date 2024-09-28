@@ -1,6 +1,6 @@
 <nav class="navbar navbar-expand-md navbar-light bg-white shadow-sm">
     <div class="container py-2">
-        <a class="navbar-brand" href="{{ url('/') }}">
+        <a class="navbar-brand font-white fw-bold" href="{{ url('/') }}">
             Traffic Complaint
         </a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
@@ -12,10 +12,12 @@
             <ul class="navbar-nav me-auto">
                 @if (Auth::check() && Auth::user()->level == 'Admin')
                     <li class="nav-item">
-                        <a class="nav-link active" aria-current="page" href="{{ route('admin.index') }}">Aduan</a>
+                        <a class="nav-link {{ Route::is('admin.index') ? 'fw-bold font-dark' : '' }}" aria-current="page"
+                            href="{{ route('admin.index') }}">Aduan</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link active" aria-current="page" href="{{ route('admin.done.complaint') }}">Aduan Selesai</a>
+                        <a class="nav-link {{ Route::is('admin.done.complaint') ? 'fw-bold font-dark' : '' }}" aria-current="page"
+                            href="{{ route('admin.done.complaint') }}">Aduan Selesai</a>
                     </li>
                 @endif
             </ul>
