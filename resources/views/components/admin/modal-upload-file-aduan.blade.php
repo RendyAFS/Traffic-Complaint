@@ -1,5 +1,7 @@
 <div class="d-flex justify-content-end">
-    <a href="" class="btn btnc-blue me-2"><i class="bi bi-file-earmark-excel-fill"></i> Template</a>
+    <a href="{{ asset('storage/assets/Template-Aduan.xlsx') }}" class="btn btnc-blue me-2" download>
+        <i class="bi bi-file-earmark-excel-fill"></i> Template
+    </a>
     <!-- Button trigger modal -->
     <button type="button" class="btn btnc-primary" data-bs-toggle="modal" data-bs-target="#uploadfileTemplateAduan">
         <i class="bi bi-file-arrow-up-fill"></i> File
@@ -11,14 +13,14 @@
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h1 class="modal-title fs-5" id="uploadfileTemplateAduanLabel">Upload File Aduan</h1>
+                <h1 class="modal-title fs-5 fw-bold font-dark" id="uploadfileTemplateAduanLabel">Upload File Aduan</h1>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
                 <form id="uploadForm" enctype="multipart/form-data">
                     <div class="mb-3">
                         <label for="fileTemplateAduan" class="form-label">
-                            Upload File Aduan
+                            Format File
                             <span class="text-grey fw-normal fst-italic">(xls, xlsx)</span>
                         </label>
                         <input class="form-control" type="file" id="fileTemplateAduan" name="fileTemplateAduan">

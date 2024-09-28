@@ -15,57 +15,102 @@
 }
 
 
-.font-primary{
+.font-primary {
     color: var(--primary-color);
 }
-.font-white{
+
+.font-white {
     color: var(--white-color);
 }
-.font-dark{
+
+.font-dark {
     color: var(--dark-color);
 }
 
-.btnc-primary{
+.font-red {
+    color: var(--red-color);
+}
+
+
+.btnc-primary {
     background-color: var(--primary-color);
     color: var(--white-color);
     border-radius: 0.7rem;
     transition: 0.3s;
 }
-.btnc-primary:hover{
+
+.btnc-primary:hover {
     background-color: var(--dark-color);
     color: var(--white-color);
 }
-.btnc-green{
+
+.btnc-green {
     background-color: var(--green-color);
     color: var(--white-color);
     border-radius: 0.7rem;
     transition: 0.3s;
 }
-.btnc-green:hover{
+
+.btnc-green:hover {
     background-color: var(--dark-color);
     color: var(--white-color);
 }
-.btnc-red{
+
+.btnc-red {
     background-color: var(--red-color);
     color: var(--white-color);
     border-radius: 0.7rem;
     transition: 0.3s;
 }
-.btnc-red:hover{
+
+.btnc-red:hover {
     background-color: var(--dark-color);
     color: var(--white-color);
 }
-.btnc-blue{
+
+.btnc-blue {
     background-color: var(--blue-color);
     color: var(--white-color);
     border-radius: 0.7rem;
     transition: 0.3s;
 }
-.btnc-blue:hover{
+
+.btnc-blue:hover {
     background-color: var(--dark-color);
     color: var(--white-color);
 }
 
-.bgc-primary{
+.bgc-primary {
     background-color: var(--primary-color);
+}
+
+
+.nav-active {
+    text-decoration: underline;
+    text-underline-offset: 0.2rem;
+}
+
+
+.text-bgc-red {
+    background: var(--red-color);
+    color: var(--white-color);
+    text-shadow: var(--dark-color);
+}
+
+.text-bgc-yellow {
+    background: var(--yellow-color);
+    color: var(--white-color);
+    text-shadow: var(--dark-color);
+}
+
+.text-bgc-blue {
+    background: var(--blue-color);
+    color: var(--white-color);
+    text-shadow: var(--dark-color);
+}
+
+.text-bgc-green {
+    background: var(--green-color);
+    color: var(--white-color);
+    text-shadow: var(--dark-color);
 }

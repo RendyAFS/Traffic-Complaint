@@ -12,11 +12,11 @@
             <ul class="navbar-nav me-auto">
                 @if (Auth::check() && Auth::user()->level == 'Admin')
                     <li class="nav-item">
-                        <a class="nav-link {{ Route::is('admin.index') ? 'fw-bold font-dark' : '' }}" aria-current="page"
+                        <a class="nav-link {{ Route::is('admin.index') ? 'fw-bold font-primary nav-active' : '' }}" aria-current="page"
                             href="{{ route('admin.index') }}">Aduan</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link {{ Route::is('admin.done.complaint') ? 'fw-bold font-dark' : '' }}" aria-current="page"
+                        <a class="nav-link {{ Route::is('admin.done.complaint') ? 'fw-bold font-primary nav-active' : '' }}" aria-current="page"
                             href="{{ route('admin.done.complaint') }}">Aduan Selesai</a>
                     </li>
                 @endif

@@ -16,6 +16,7 @@ return new class extends Migration
             $table->foreignId('users_id')->constrained();
             $table->string('text_complaint');
             $table->string('type_complaint')->nullable();
+            $table->string('lokasi')->nullable();
             $table->string('status')->nullable();
             $table->string('gambar')->nullable();
             $table->timestamps();

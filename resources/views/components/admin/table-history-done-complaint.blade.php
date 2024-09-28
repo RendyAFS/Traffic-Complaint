@@ -4,6 +4,7 @@
             <tr>
                 <th>No.</th>
                 <th class="align-middle">Nama</th>
+                <th class="align-middle">Lokasi</th>
                 <th class="align-middle">Aduan</th>
                 <th class="align-middle text-center">Jenis Aduan</th>
                 <th class="align-middle text-center">Skala Prioritas</th>
@@ -66,6 +67,11 @@
             {
                 data: 'user.name',
                 name: 'user.name',
+                className: 'align-middle'
+            },
+            {
+                data: 'lokasi',
+                name: 'lokasi',
                 className: 'align-middle'
             },
             {

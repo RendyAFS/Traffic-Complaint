@@ -70,6 +70,7 @@ class AdminController extends Controller
     {
         $request->validate([
             'text-complaint' => 'required|string|max:255',
+            'lokasi' => 'required|string|max:255',
             'gambar' => 'nullable|string',
         ]);
 
@@ -80,6 +81,7 @@ class AdminController extends Controller
             'users_id' => Auth::id(),
             'text_complaint' => $request->input('text-complaint'),
             'type_complaint' => $this->getRandomComplaintType(), // Fungsi untuk mendapatkan tipe aduan secara acak
+            'lokasi' => $request->input('lokasi'),
             'status' => 'Belum Selesai',
             'gambar' => $filename, // Gunakan nama file dari session
         ]);
