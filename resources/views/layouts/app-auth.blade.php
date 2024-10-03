@@ -26,7 +26,7 @@
 </head>
 
 <body>
-    <div id="app">
+    <div id="app" class="warp-bg-login">
         @yield('content')
     </div>
     @include('components.sessionAccess')

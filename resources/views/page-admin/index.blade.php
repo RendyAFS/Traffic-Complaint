@@ -4,13 +4,13 @@
     <div class="container py-4">
         @include('components.admin.modal-upload-file-aduan')
         <div class="mb-4">
-            <div class="mb-3">
+            <div class="mb-3" data-aos="fade-up">
                 <span class="fs-3 fw-bold">Input Data Aduan</span>
             </div>
             @include('components.admin.input-complaint')
         </div>
         <div class="mb-4">
-            <div class="mb-3">
+            <div class="mb-3" data-aos="fade-right">
                 <span class="fs-3 fw-bold">Tabel Riwayat Aduan</span>
             </div>
             @include('components.admin.table-history-complaint')

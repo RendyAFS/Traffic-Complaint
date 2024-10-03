@@ -1,6 +1,6 @@
-<form action="{{ route('form.complaint.user') }}" method="POST" enctype="multipart/form-data">
+<form action="{{ route('form.complaint.user') }}" method="POST" enctype="multipart/form-data" data-aos="zoom-in">
     @csrf
-    <div class="card px-4 py-4 border-0 shadow-sm">
+    <div class="card px-4 py-4 border-0 shadow rounded-4">
         <div class="mb-3">
             <label for="text-complaint" class="form-label fw-bold">Masukkan Aduan</label>
             <textarea class="form-control" id="text-complaint" name="text-complaint" rows="3" required></textarea>

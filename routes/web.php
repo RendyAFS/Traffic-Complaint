@@ -1,10 +1,13 @@
 <?php
 
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\LandingPageController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
+use Carbon\Carbon;
+use App\Models\Complient;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -16,9 +19,8 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
+Route::get('/', [LandingPageController::class, 'indexLandingPage'])->name('indexLandingPage');
+
 
 Auth::routes();
 
@@ -38,7 +40,6 @@ Route::middleware(['auth', 'checklevel:Admin'])->group(function () {
 
     Route::get('/admin/done-complaint', [AdminController::class, 'indexDoneComplaint'])->name('admin.done.complaint');
     Route::get('/admin/done-complaints/data', [AdminController::class, 'getDataDoneComplaint'])->name('getDataDoneComplaint');
-
 });
 
 // Route untuk User
