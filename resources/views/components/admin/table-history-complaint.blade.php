@@ -1,4 +1,4 @@
-<div>
+<div class="card p-4 rounded-4 shadow" data-aos="zoom-in">
     <table id="example" class="table table-hover" style="width:100%">
         <thead>
             <tr>
@@ -72,7 +72,13 @@
             {
                 data: 'lokasi',
                 name: 'lokasi',
-                className: 'align-middle'
+                className: 'align-middle',
+                render: function(data, type, row) {
+                    // Membuat link ke Google Maps dengan pencarian berdasarkan data lokasi
+                    var googleMapsUrl = 'https://www.google.com/maps/search/?api=1&query=' +
+                        encodeURIComponent(data);
+                    return '<a href="' + googleMapsUrl + '" target="_blank">' + data + '</a>';
+                }
             },
             {
                 data: 'text_complaint',

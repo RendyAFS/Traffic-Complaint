@@ -3,13 +3,13 @@
 @section('content')
     <div class="container py-4">
         <div class="mb-4">
-            <div class="mb-3">
+            <div class="mb-3" data-aos="fade-up">
                 <span class="fs-3 fw-bold">Input Data Aduan</span>
             </div>
             @include('components.user.input-complaint')
         </div>
         <div class="mb-4">
-            <div class="mb-3">
+            <div class="mb-3" data-aos="fade-right">
                 <span class="fs-3 fw-bold">Tabel Riwayat Aduan</span>
             </div>
             @include('components.user.table-history-complaint')

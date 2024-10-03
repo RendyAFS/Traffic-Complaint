@@ -1,4 +1,4 @@
-<div>
+<div class="card p-4 rounded-4 shadow" data-aos="zoom-in">
     <table id="example" class="table table-hover" style="width:100%">
         <thead>
             <tr>

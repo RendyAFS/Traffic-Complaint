@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Complaint;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -37,5 +39,21 @@ class HomeController extends Controller
 
         // Jika level tidak dikenali, redirect ke halaman default
         return redirect('/home');
+    }
+
+    public function indexLandingPage()
+    {
+        // Total seluruh Complient
+        $totalComplient = Complaint::count();
+
+        // Complient dalam 1 minggu terakhir
+        $oneWeekAgo = Carbon::now()->subWeek(); // Mendapatkan tanggal satu minggu lalu
+        $complientWeekly = Complaint::where('created_at', '>=', $oneWeekAgo)->count();
+
+        // Complient dengan status "Selesai"
+        $complinetDone = Complaint::where('status', 'Selesai')->count();
+
+        // Kirim data ke view welcome
+        return view('welcome', compact('totalComplient', 'complientWeekly', 'complinetDone'));
     }
 }

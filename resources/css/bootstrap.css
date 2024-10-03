@@ -10,6 +10,7 @@
     --red-color: #db5858;
     --green-color: #58db63;
     --blue-color: #5870db;
+    --font-blue: #0B2F9F;
     --yellow-color: #FFCE20;
     --background-color: linear-gradient(to right, #0D2454, #0842B9, #9DBDFF);
 }
@@ -30,6 +31,9 @@
 .font-red {
     color: var(--red-color);
 }
+.font-blue {
+    color: var(--font-blue);
+}
 
 
 .btnc-primary {
@@ -40,6 +44,20 @@
 }
 
 .btnc-primary:hover {
+    background-color: var(--dark-color);
+    color: var(--white-color);
+}
+.btnc-border-primary {
+    background-color: var(--body-color);
+    color: var(--primary-color);
+    font-weight: bold;
+    border: solid 1px var(--primary-color);
+    padding: 1rem 2rem;
+    border-radius: 0.7rem;
+    transition: 0.3s;
+}
+
+.btnc-border-primary:hover {
     background-color: var(--dark-color);
     color: var(--white-color);
 }
@@ -113,4 +131,28 @@
     background: var(--green-color);
     color: var(--white-color);
     text-shadow: var(--dark-color);
+}
+
+.btn-login{
+    background: var(--primary-color);
+    color: var(--white-color);
+    padding: 0.6rem 0rem;
+    font-weight: bold;
+    border-radius: 1rem;
+    transition: 0.5s;
+}
+.btn-login:hover{
+    background: var(--white-soft-color);
+    color: var(--dark-color);
+}
+.btn-registrasi{
+    border: solid 1px var(--primary-color);
+    color: var(--primary-color);
+    padding: 0.5rem 0rem;
+    font-weight: bold;
+    border-radius: 1rem;
+    transition: 0.5s;
+}
+.btn-registrasi:hover{
+    background: var(--secondary-color);
 }
