@@ -72,17 +72,12 @@
             pond.setOptions({
                 server: {
                     process: {
-                        url: '{{ route('upload.fileAduan.admin') }}', // Route to handle file upload
+                        url: '{{ route('upload.fileAduan.admin') }}',
                         method: 'POST',
                         headers: {
-                            'X-CSRF-TOKEN': '{{ csrf_token() }}' // CSRF token for security
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}'
                         },
                         onload: (response) => {
-                            console.log('File uploaded successfully:', response);
-                            $('#uploadfileTemplateAduan').modal(
-                            'hide'); // Menutup modal setelah berhasil
-
-                            // Tampilkan pesan sukses dengan Swal
                             Swal.fire({
                                 icon: 'success',
                                 title: 'Berhasil',
@@ -90,17 +85,22 @@
                                 confirmButtonText: 'OK',
                                 confirmButtonColor: '#0D2454'
                             }).then(() => {
-                                // Reload halaman setelah pengguna menekan OK
                                 location.reload();
                             });
                         },
                         onerror: (error) => {
                             console.error('Error during upload:', error);
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Gagal Upload',
+                                text: 'Terjadi kesalahan selama proses upload. Silakan coba lagi.',
+                                confirmButtonText: 'OK',
+                                confirmButtonColor: '#0D2454'
+                            });
                         }
                     }
                 }
             });
-
             // Process the first file
             pond.processFile(pond.getFiles()[0]);
         } else {
