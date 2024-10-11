@@ -29,7 +29,7 @@
             .then(function(result) {
                 if (result.state === 'granted') {
                     document.getElementById('accessLocationButton').style.display = 'none';
-                    requestLocation(); // Panggil fungsi requestLocation jika izin sudah diberikan
+                    requestLocation();
                 } else {
                     document.getElementById('accessLocationButton').style.display = 'block';
                     document.getElementById('submitButton').disabled = true;
@@ -39,7 +39,11 @@
 
     function requestLocation() {
         if (navigator.geolocation) {
-            navigator.geolocation.getCurrentPosition(success, error);
+            navigator.geolocation.getCurrentPosition(success, error, {
+                enableHighAccuracy: true,
+                timeout: 5000,
+                maximumAge: 0
+            });
         } else {
             console.error("Geolocation is not supported by this browser.");
         }
@@ -71,14 +75,8 @@
                         `${street} ${houseNumber}, ${suburb || village}, Kec. ${cityDistrict}, ${city}, ${state}, ${postalCode}`
                         .trim();
                 }
-
-                // Mengisi input lokasi tanpa fallback
                 document.getElementById('lokasi').value = fullAddress || '';
-
-                // Meng-enable tombol simpan
                 document.getElementById('submitButton').disabled = false;
-
-                // Sembunyikan tombol akses lokasi
                 document.getElementById('accessLocationButton').style.display = 'none';
             })
             .catch(error => {
