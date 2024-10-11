@@ -5,7 +5,7 @@
             <label for="text-complaint" class="form-label fw-bold">Masukkan Aduan</label>
             <textarea class="form-control" id="text-complaint" name="text-complaint" rows="3" required></textarea>
         </div>
-        <div class="mb-3 d-none">
+        <div class="mb-3 d-block">
             <label for="lokasi" class="form-label fw-bold">Masukkan Lokasi</label>
             <input class="form-control" id="lokasi" name="lokasi" rows="3" required />
         </div>
