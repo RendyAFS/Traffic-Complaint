@@ -18,10 +18,10 @@
 
         <div class="d-flex justify-content-center">
             <a href="{{ route('user.index') }}" class="btn btnc-red me-2"><i class="bi bi-x-circle-fill"></i> Reset</a>
-            <button type="button" class="btn btnc-green me-2" id="accessLocationButton" onclick="requestLocation()">
+            <button type="button" class="btn btnc-blue me-2" id="accessLocationButton" onclick="requestLocation()">
                 <i class="bi bi-geo-alt-fill"></i> Akses Lokasi
             </button>
-            <button type="submit" class="btn btnc-green" id="submitButton" disabled>
+            <button type="submit" class="btn btnc-green" id="submitButton">
                 <i class="bi bi-floppy-fill"></i> Simpan
             </button>
         </div>

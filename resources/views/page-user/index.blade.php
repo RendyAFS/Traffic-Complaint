@@ -24,24 +24,48 @@
 
     function checkLocationPermission() {
         navigator.permissions.query({
-                name: 'geolocation'
-            })
-            .then(function(result) {
-                if (result.state === 'granted') {
-                    document.getElementById('accessLocationButton').style.display = 'none';
-                    requestLocation();
-                } else {
-                    document.getElementById('accessLocationButton').style.display = 'block';
-                    document.getElementById('submitButton').disabled = true;
-                }
-            });
+            name: 'geolocation'
+        }).then(function(result) {
+            if (result.state === 'granted' || localStorage.getItem('locationAccess') === 'true') {
+                document.getElementById('accessLocationButton').style.display = 'none';
+                requestLocation();
+            } else {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Lokasi tidak aktif',
+                    text: 'Silakan aktifkan lokasi untuk melanjutkan.',
+                    allowOutsideClick: false,
+                    showConfirmButton: true,
+                    confirmButtonText: 'Akses Lokasi',
+                    confirmButtonColor: '#0D2454',
+                    showCancelButton: true,
+                    cancelButtonText: 'Batal',
+                    cancleButtonColor: '#7a0000'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        requestLocation();
+                    }
+                });
+
+                document.getElementById('accessLocationButton').style.display = 'block';
+            }
+        });
     }
 
     function requestLocation() {
         if (navigator.geolocation) {
+            Swal.fire({
+                title: 'Sedang mengakses lokasi',
+                text: 'Tunggu sebentar...',
+                allowOutsideClick: false,
+                didOpen: () => {
+                    Swal.showLoading();
+                }
+            });
+
             navigator.geolocation.getCurrentPosition(success, error, {
                 enableHighAccuracy: true,
-                timeout: 5000,
+                timeout: 500,
                 maximumAge: 0
             });
         } else {
@@ -58,7 +82,7 @@
             )
             .then(response => response.json())
             .then(data => {
-                console.log(data); // Untuk debugging
+                console.log(data);
                 let fullAddress = '';
 
                 if (data.address) {
@@ -75,32 +99,31 @@
                         `${street} ${houseNumber}, ${suburb || village}, Kec. ${cityDistrict}, ${city}, ${state}, ${postalCode}`
                         .trim();
                 }
+
                 document.getElementById('lokasi').value = fullAddress || '';
-                document.getElementById('submitButton').disabled = false;
                 document.getElementById('accessLocationButton').style.display = 'none';
+                localStorage.setItem('locationAccess', 'true');
+
+                Swal.close();
             })
             .catch(error => {
                 console.error('Error:', error);
                 document.getElementById('lokasi').value = 'Terjadi kesalahan saat mendapatkan lokasi.';
+
+                Swal.close();
             });
     }
 
     function error() {
         console.error("Unable to retrieve your location.");
-        Swal.fire({
-            icon: 'warning',
-            title: 'Peringatan',
-            text: 'Silahkan aktifkan lokasi',
-            toast: true,
-            position: 'top-end',
-            showConfirmButton: false,
-            timer: 3000,
-            timerProgressBar: true
-        });
-        document.getElementById('submitButton').disabled = true;
         document.getElementById('accessLocationButton').style.display = 'block';
+
+        localStorage.removeItem('locationAccess');
+
+        Swal.close();
     }
 </script>
+
 
 @push('scripts')
     <script type="module">

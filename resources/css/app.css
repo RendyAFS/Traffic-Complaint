@@ -2,13 +2,14 @@
     --primary-color: #0D2454;
     --secondary-color: #9DBDFF;
     --grey-color: #727375;
-    --soft-grey-color: #E0E0E0;
+    --soft-grey-color: #cacaca;
     --white-color: #FFFFFF;
     --white-soft-color: #EBF2FF;
     --bg-loading-color: rgb(255, 255, 255, 0.9);
     --dark-color: #1a1a1a;
     --green-color: #005e43;
     --blue-color: #00467a;
+    --red-color: #7a0000;
     --font-blue: #0B2F9F;
     --yellow-color: #FFCE20;
     --background-color: linear-gradient(to right, #0D2454, #0842B9, #9DBDFF);

@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Imports\ComplaintsImport;
+use Illuminate\Support\Facades\Log;
 
 class AdminController extends Controller
 {
@@ -131,8 +132,12 @@ class AdminController extends Controller
                 Excel::import(new ComplaintsImport, $file);
                 return response()->json(['success' => 'File imported successfully!']);
             } catch (\Exception $e) {
+                // Log error ke laravel.log untuk pengecekan
+                Log::error('File import error: ' . $e->getMessage());
+
                 return response()->json(['error' => 'Gagal mengimpor file: ' . $e->getMessage()], 500);
             }
+
         }
 
         return response()->json(['error' => 'Tidak ada file yang diupload'], 400);

@@ -39,7 +39,7 @@
     </footer>
     <div class="end-footer">
         <div class="text-center">
-            <span class="fst-italic fw-bold">&copy;Traffic Complaitment {{ date('Y') }}</span>
+            <span class="fst-italic fw-bold">&copy;Traffic Complaint {{ date('Y') }}</span>
         </div>
     </div>
 @endif
