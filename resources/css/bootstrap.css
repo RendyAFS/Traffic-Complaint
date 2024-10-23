@@ -2,7 +2,7 @@
     --primary-color: #0D2454;
     --secondary-color: #9DBDFF;
     --grey-color: #727375;
-    --soft-grey-color: #E0E0E0;
+    --soft-grey-color: #cacaca;
     --white-color: #FFFFFF;
     --white-soft-color: #EBF2FF;
     --bg-loading-color: rgb(255, 255, 255, 0.9);
@@ -23,6 +23,9 @@
 .font-white {
     color: var(--white-color);
 }
+.font-soft-grey {
+    color: var(--soft-grey-color);
+}
 
 .font-dark {
     color: var(--dark-color);
@@ -35,7 +38,6 @@
     color: var(--font-blue);
 }
 
-
 .btnc-primary {
     background-color: var(--primary-color);
     color: var(--white-color);
@@ -47,6 +49,7 @@
     background-color: var(--dark-color);
     color: var(--white-color);
 }
+
 .btnc-border-primary {
     background-color: var(--body-color);
     color: var(--primary-color);
@@ -54,7 +57,7 @@
     border: solid 1px var(--primary-color);
     padding: 1rem 2rem;
     border-radius: 0.7rem;
-    transition: 0.3s;
+    transition: 0.5s;
 }
 
 .btnc-border-primary:hover {

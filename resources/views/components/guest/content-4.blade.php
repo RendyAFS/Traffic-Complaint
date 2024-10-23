@@ -1,6 +1,6 @@
 <div class="content mb-5">
     <div class="text-center mb-5" data-aos="fade-up">
-        <span class=" fw-bold fs-3 font-primary mb-4">Cara Pengaduan</span>
+        <span class=" fw-bold fs-3 font-blue mb-4">Cara Pengaduan</span>
     </div>
     <div class="content-5 mb-5">
         <div class="row text-center" data-aos="zoom-in-up">
