@@ -31,23 +31,18 @@ class AdminController extends Controller
             'gambar' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
 
-        // Simpan file ke folder 'file-gambar' di storage publik
         if ($request->hasFile('gambar')) {
             $user = Auth::user();
             $file = $request->file('gambar');
             $originalName = $file->getClientOriginalName();
 
-            // Fungsi untuk menghasilkan kode acak 11 karakter
             $randomCode = '';
             $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
             $charactersLength = strlen($characters);
-
-            // Menghasilkan kode acak
             for ($i = 0; $i < 11; $i++) {
                 $randomCode .= $characters[rand(0, $charactersLength - 1)];
             }
 
-            // Buat nama file dengan format: id-user-email_user-randomCode-nama_gambar.ext
             $filename = $user->id . '-' . $user->email . '_' . $user->name . '_' . $randomCode . '_' . $originalName;
 
             try {
@@ -56,16 +51,12 @@ class AdminController extends Controller
                 return response()->json(['error' => 'Gagal upload file: ' . $e->getMessage()], 500);
             }
 
-            // Simpan nama file di session
             session(['uploaded_image' => $filename]);
-
             return response()->json(['filename' => $filename]);
         }
 
         return response()->json(['error' => 'Gagal upload file'], 400);
     }
-
-
 
     public function formComplaint(Request $request)
     {
@@ -137,7 +128,6 @@ class AdminController extends Controller
 
                 return response()->json(['error' => 'Gagal mengimpor file: ' . $e->getMessage()], 500);
             }
-
         }
 
         return response()->json(['error' => 'Tidak ada file yang diupload'], 400);

@@ -27,23 +27,19 @@ class UserController extends Controller
             'gambar' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
 
-        // Simpan file ke folder 'file-gambar' di storage publik
         if ($request->hasFile('gambar')) {
             $user = Auth::user();
             $file = $request->file('gambar');
             $originalName = $file->getClientOriginalName();
 
-            // Fungsi untuk menghasilkan kode acak 11 karakter
             $randomCode = '';
             $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
             $charactersLength = strlen($characters);
 
-            // Menghasilkan kode acak
             for ($i = 0; $i < 11; $i++) {
                 $randomCode .= $characters[rand(0, $charactersLength - 1)];
             }
 
-            // Buat nama file dengan format: id-user-email_user-randomCode-nama_gambar.ext
             $filename = $user->id . '-' . $user->email . '_' . $user->name . '_' . $randomCode . '_' . $originalName;
 
             try {
@@ -52,9 +48,7 @@ class UserController extends Controller
                 return response()->json(['error' => 'Gagal upload file: ' . $e->getMessage()], 500);
             }
 
-            // Simpan nama file di session
             session(['uploaded_image' => $filename]);
-
             return response()->json(['filename' => $filename]);
         }
 
@@ -67,19 +61,23 @@ class UserController extends Controller
         $request->validate([
             'text-complaint' => 'required|string|max:255',
             'lokasi' => 'required|string|max:255',
-            'gambar' => 'nullable|string',
         ]);
 
-        // Ambil nama file dari session
+        // Cek apakah gambar ada di session
         $filename = session('uploaded_image');
+
+        if (!$filename) {
+            // Redirect back with error if no image was uploaded
+            return redirect()->back()->withErrors(['gambar' => 'Gambar tidak diunggah atau ukurannya melebihi 2 MB.']);
+        }
 
         Complaint::create([
             'users_id' => Auth::id(),
             'text_complaint' => $request->input('text-complaint'),
-            'type_complaint' => $this->getRandomComplaintType(), // Fungsi untuk mendapatkan tipe aduan secara acak
+            'type_complaint' => $this->getRandomComplaintType(),
             'lokasi' => $request->input('lokasi'),
             'status' => 'Belum Selesai',
-            'gambar' => $filename, // Gunakan nama file dari session
+            'gambar' => $filename,
         ]);
 
         // Hapus session setelah disimpan

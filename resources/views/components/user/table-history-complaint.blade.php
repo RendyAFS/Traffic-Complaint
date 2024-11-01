@@ -12,7 +12,6 @@
 </div>
 <script type="module">
     // Table Riwayat
-    // Table Riwayat
     $('#example').DataTable({
         processing: true,
         serverSide: true,

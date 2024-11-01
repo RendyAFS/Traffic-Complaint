@@ -43,14 +43,14 @@
 </head>
 
 <body>
-    @include('components.navbar')
+    @include('layouts.navbar')
 
     <div class="pb-5">
         @yield('content')
     </div>
 
-    @include('components.footer')
-    @include('components.sessionAccess')
+    @include('layouts.footer')
+    @include('layouts.sessionAccess')
     @stack('scripts')
 
     {{-- Bootstrap --}}
