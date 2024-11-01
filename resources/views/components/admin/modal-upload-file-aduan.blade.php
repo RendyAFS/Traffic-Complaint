@@ -1,4 +1,4 @@
-<div class="d-flex justify-content-end">
+<div class="d-flex justify-content-end flex-row">
     <a href="{{ asset('storage/assets/Template-Aduan.xlsx') }}" class="btn btnc-blue me-2" download>
         <i class="bi bi-file-earmark-excel-fill"></i> Template
     </a>

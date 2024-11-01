@@ -29,7 +29,7 @@
     <div id="app" class="warp-bg-login">
         @yield('content')
     </div>
-    @include('components.sessionAccess')
+    @include('layouts.sessionAccess')
     @stack('scripts')
 
     {{-- Bootstrap --}}
