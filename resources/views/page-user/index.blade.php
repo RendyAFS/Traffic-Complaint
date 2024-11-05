@@ -9,26 +9,34 @@
             <form action="{{ route('form.complaint.user') }}" method="POST" enctype="multipart/form-data" data-aos="zoom-in">
                 @csrf
                 <div class="card px-4 py-4 border-0 shadow rounded-4">
-                    <div class="mb-3">
-                        <label for="text-complaint" class="form-label fw-bold">Masukkan Aduan</label>
-                        <textarea class="form-control" id="text-complaint" name="text-complaint" rows="3" required></textarea>
+                    <div class="row">
+                        <div class="col-lg-6">
+                            <div class="mb-3">
+                                <label for="text-complaint" class="form-label fw-bold">Masukkan Aduan</label>
+                                <textarea class="form-control" id="text-complaint" name="text-complaint" rows="3" required></textarea>
+                            </div>
+                            <div class="mb-3">
+                                <label for="lokasi" class="form-label fw-bold">Masukkan Lokasi</label>
+                                <input type="text" class="form-control" id="lokasi" name="lokasi"
+                                    placeholder="Masukkan Lokasi">
+                            </div>
+                        </div>
+                        <div class="col-lg-6">
+                            <div class="mb-3">
+                                <label for="gambar" class="form-label fw-bold">Masukkan Media
+                                    <span class="text-grey fw-normal fst-italic">(png, jpg, jpeg)</span>
+                                </label>
+                                <input type="file" id="fileGambar" name="gambar" />
+                            </div>
+                        </div>
                     </div>
-                    <div class="input-group mb-3">
-                        <input type="text" class="form-control" id="lokasi" name="lokasi"
-                            placeholder="Masukkan Lokasi" aria-label="Masukkan Lokasi" aria-describedby="cek-lokasi">
-                        <button class="btn btnc-blue" type="button" id="cek-lokasi">Cek
-                            Lokasi</button>
-                    </div>
-                    <div class="mb-3">
-                        <label for="gambar" class="form-label fw-bold">Masukkan Media
-                            <span class="text-grey fw-normal fst-italic">(png, jpg, jpeg)</span>
-                        </label>
-                        <input type="file" id="fileGambar" name="gambar" />
-                    </div>
-
                     <div class="d-flex justify-content-center flex-row">
                         <a href="{{ route('user.index') }}" class="btn btnc-red me-2"><i class="bi bi-x-circle-fill"></i>
                             Reset</a>
+                        <button class="btn btnc-blue me-2" type="button" id="cek-lokasi">
+                            <i class="bi bi-geo-alt-fill"></i>
+                            Cek Lokasi
+                        </button>
                         <button type="submit" class="btn btnc-green" id="submitButton">
                             <i class="bi bi-floppy-fill"></i> Simpan
                         </button>
@@ -47,6 +55,7 @@
 
 @push('scripts')
     <script type="module">
+        FilePond.create(document.getElementById('fileGambar'));
         // alert upload
         @if (session('success-upload'))
             Swal.fire({
@@ -119,12 +128,7 @@
             }).then(function(permissionStatus) {
                 if (permissionStatus.state === 'granted') {
                     // Jika izin sudah diberikan, langsung dapatkan lokasi
-                    if (navigator.geolocation) {
-                        navigator.geolocation.getCurrentPosition(showPosition, showError);
-                    } else {
-                        Swal.fire("Geolocation tidak didukung", "Browser Anda tidak mendukung geolocation.",
-                            "error");
-                    }
+                    getGeolocation();
                 } else if (permissionStatus.state === 'prompt') {
                     // Jika izin belum ditentukan, tampilkan konfirmasi menggunakan Swal
                     Swal.fire({
@@ -137,12 +141,7 @@
                     }).then((result) => {
                         if (result.isConfirmed) {
                             // Minta izin geolokasi dari pengguna
-                            if (navigator.geolocation) {
-                                navigator.geolocation.getCurrentPosition(showPosition, showError);
-                            } else {
-                                Swal.fire("Geolocation tidak didukung",
-                                    "Browser Anda tidak mendukung geolocation.", "error");
-                            }
+                            getGeolocation();
                         }
                     });
                 } else if (permissionStatus.state === 'denied') {
@@ -154,13 +153,32 @@
             });
         });
 
+        function getGeolocation() {
+            // Tampilkan loading Swal saat pengambilan lokasi dimulai
+            Swal.fire({
+                title: "Mengambil Lokasi...",
+                text: "Harap tunggu sebentar.",
+                allowOutsideClick: false,
+                didOpen: () => {
+                    Swal.showLoading();
+                }
+            });
+
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(showPosition, showError);
+            } else {
+                Swal.fire("Geolocation tidak didukung", "Browser Anda tidak mendukung geolocation.", "error");
+            }
+        }
+
         function showPosition(position) {
             let latitude = position.coords.latitude;
             let longitude = position.coords.longitude;
 
             // Menggunakan Nominatim API untuk reverse geocoding
             fetch(
-                    `https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}&addressdetails=1`)
+                    `https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}&addressdetails=1`
+                    )
                 .then(response => response.json())
                 .then(data => {
                     let address = data.address;
@@ -168,7 +186,7 @@
                         `${address.road || ''}, ${address.suburb || ''}, ${address.city || address.town || address.village || ''}, ${address.state || ''}, ${address.postcode || ''}`;
                     document.getElementById("lokasi").value = lokasiText.trim();
 
-                    // Menampilkan pesan sukses
+                    // Menutup Swal loading dan menampilkan pesan sukses
                     Swal.fire("Berhasil", "Lokasi berhasil didapatkan!", "success");
                 })
                 .catch(error => {
@@ -195,6 +213,7 @@
             }
             Swal.fire("Gagal", errorMessage, "error");
         }
+
 
         document.addEventListener("DOMContentLoaded", function() {
             @if ($errors->has('gambar'))

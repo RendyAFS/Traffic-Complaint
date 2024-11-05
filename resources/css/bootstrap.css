@@ -57,13 +57,14 @@
     border: solid 1px var(--primary-color);
     padding: 1rem 2rem;
     border-radius: 0.7rem;
-    transition: 0.5s;
+    transition: background-color 0.5s, color 0.5s, border-color 0.5s;
 }
 
 .btnc-border-primary:hover {
     background-color: var(--dark-color);
     color: var(--white-color);
 }
+
 
 .btnc-green {
     background-color: var(--green-color);
@@ -158,4 +159,12 @@
 }
 .btn-registrasi:hover{
     background: var(--secondary-color);
+}
+
+.icon-new-complaint{
+    color: var(--font-blue);
+}
+
+.fs-7{
+    font-size: 12px;
 }
