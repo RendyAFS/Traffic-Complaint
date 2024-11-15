@@ -10,23 +10,27 @@
             <form action="{{ route('form.complaint.admin') }}" method="POST" enctype="multipart/form-data" data-aos="zoom-in">
                 @csrf
                 <div class="card px-4 py-4 border-0 shadow rounded-4">
-                    <div class="mb-3">
-                        <label for="text-complaint" class="form-label fw-bold">Masukkan Aduan</label>
-                        <textarea class="form-control" id="text-complaint" name="text-complaint" rows="3" required></textarea>
-                    </div>
+                    <div class="row">
+                        <div class="col-lg-6">
+                            <div class="mb-3">
+                                <label for="text-complaint" class="form-label fw-bold">Masukkan Aduan</label>
+                                <textarea class="form-control" id="text-complaint" name="text-complaint" rows="3" required></textarea>
+                            </div>
 
-                    <div class="mb-3">
-                        <label for="lokasi" class="form-label fw-bold">Masukkan Lokasi</label>
-                        <input class="form-control" id="lokasi" name="lokasi" rows="3" required></input>
+                            <div class="mb-3">
+                                <label for="lokasi" class="form-label fw-bold">Masukkan Lokasi</label>
+                                <input class="form-control" id="lokasi" name="lokasi" rows="3" required></input>
+                            </div>
+                        </div>
+                        <div class="col-lg-6">
+                            <div class="mb-3">
+                                <label for="gambar" class="form-label fw-bold">Masukkan Media
+                                    <span class="text-grey fw-normal fst-italic">(png, jpg, jpeg)</span>
+                                </label>
+                                <input type="file" id="fileGambar" name="gambar" />
+                            </div>
+                        </div>
                     </div>
-
-                    <div class="mb-3">
-                        <label for="gambar" class="form-label fw-bold">Masukkan Media
-                            <span class="text-grey fw-normal fst-italic">(png, jpg, jpeg)</span>
-                        </label>
-                        <input type="file" id="fileGambar" name="gambar" />
-                    </div>
-
                     <div class="d-flex justify-content-center flex-row">
                         <a href="{{ route('admin.index') }}" class="btn btnc-red me-2"><i class="bi bi-x-circle-fill"></i>
                             Reset</a>

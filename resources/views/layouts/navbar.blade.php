@@ -1,7 +1,7 @@
 <nav class="navbar navbar-expand-md navbar-light bg-white shadow-sm">
     <div class="container py-2">
         <a class="navbar-brand font-white fw-bold" href="{{ url('/') }}">
-            Traffic Complaint
+            Traffic Urgency
         </a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
             aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="{{ __('Toggle navigation') }}">
@@ -33,7 +33,8 @@
                 @guest
                     @if (Route::has('login'))
                         <li class="nav-item">
-                            <a class="nav-link btn-login px-4 me-2 mb-3 mb-md-0 mt-5 mt-md-0" href="{{ route('login') }}">Login</a>
+                            <a class="nav-link btn-login px-4 me-2 mb-3 mb-md-0 mt-5 mt-md-0"
+                                href="{{ route('login') }}">Login</a>
                         </li>
                     @endif
 
@@ -46,7 +47,9 @@
                     @if (Request::is('/'))
                         <!-- Tampilkan link ke /home jika sudah login dan berada di halaman landing page (/) -->
                         <li class="nav-item">
-                            <a class="nav-link" href="{{ url('/home') }}">Masuk</a>
+                            <a class="nav-link btn btnc-primary px-4" href="{{ url('/home') }}">
+                                Kembali <i class="bi bi-arrow-right ms-2"></i>
+                            </a>
                         </li>
                     @else
                         <!-- Dropdown menu jika berada di halaman lain -->

@@ -5,7 +5,7 @@
                 <div class="footer-1 px-5">
                     <div class="mb-4">
                         <a class="navbar-brand fs-4 font-white fw-bold" href="{{ url('/') }}">
-                            Traffic Complaint
+                            Traffic Urgency
                         </a>
                     </div>
                     <br>
@@ -39,7 +39,7 @@
     </footer>
     <div class="end-footer">
         <div class="text-center">
-            <span class="fst-italic fw-bold">&copy;Traffic Complaint {{ date('Y') }}</span>
+            <span class="fst-italic fw-bold">&copy;Traffic Urgency {{ date('Y') }}</span>
         </div>
     </div>
 @endif
