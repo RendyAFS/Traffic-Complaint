@@ -26,7 +26,12 @@ class UserController extends Controller
         $request->validate([
             'text-complaint' => 'required|string|max:255',
             'lokasi' => 'required|string|max:255',
-            'gambar' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048', // Tambahkan validasi untuk gambar
+            'gambar' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048', // Validasi gambar
+        ], [
+            'gambar.required' => 'Gambar harus diunggah.',
+            'gambar.image' => 'File yang diunggah harus berupa gambar.',
+            'gambar.mimes' => 'Gambar harus berformat jpeg, png, jpg, atau gif.',
+            'gambar.max' => 'Gambar maksimal berukuran 2MB.',
         ]);
 
         $user = Auth::user();
@@ -69,6 +74,7 @@ class UserController extends Controller
 
         return redirect()->back()->with('success-upload', 'Aduan berhasil disimpan!');
     }
+
 
     private function getRandomComplaintType()
     {

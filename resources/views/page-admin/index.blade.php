@@ -23,10 +23,10 @@
                         </div>
                         <div class="col-lg-6">
                             <div class="mb-3">
-                                <label for="gambar" class="form-label fw-bold">Masukkan Media
-                                    <span class="text-grey fw-normal fst-italic">(png, jpg, jpeg)</span>
-                                </label>
-                                <input type="file" id="fileGambar" name="gambar" />
+                                <label for="gambar" class="form-label fw-bold">Masukkan Media <span
+                                        class="text-grey fw-normal fst-italic">(png, jpg, jpeg) max 2Mb</span></label><br>
+                                <input type="file" id="fileGambar" name="gambar" class="border w-100 p-3 rounded-2"
+                                    required>
                             </div>
                         </div>
                     </div>
