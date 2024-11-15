@@ -19,19 +19,24 @@ class UserController extends Controller
         $title = 'User';
         return view('page-user.index', compact('title'));
     }
-
-    public function uploadGambar(Request $request)
+    // Method untuk simpan aduan
+    public function formComplaint(Request $request)
     {
-        // Validasi file gambar
+        // Validasi input
         $request->validate([
-            'gambar' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'text-complaint' => 'required|string|max:255',
+            'lokasi' => 'required|string|max:255',
+            'gambar' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048', // Tambahkan validasi untuk gambar
         ]);
 
+        $user = Auth::user();
+
+        // Upload gambar jika ada
         if ($request->hasFile('gambar')) {
-            $user = Auth::user();
             $file = $request->file('gambar');
             $originalName = $file->getClientOriginalName();
 
+            // Generate filename unik
             $randomCode = '';
             $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
             $charactersLength = strlen($characters);
@@ -42,37 +47,19 @@ class UserController extends Controller
 
             $filename = $user->id . '-' . $user->email . '_' . $user->name . '_' . $randomCode . '_' . $originalName;
 
+            // Simpan gambar
             try {
                 $file->storeAs('file-gambar', $filename, 'public');
             } catch (\Exception $e) {
-                return response()->json(['error' => 'Gagal upload file: ' . $e->getMessage()], 500);
+                return redirect()->back()->withErrors(['gambar' => 'Gagal upload file: ' . $e->getMessage()]);
             }
-
-            session(['uploaded_image' => $filename]);
-            return response()->json(['filename' => $filename]);
+        } else {
+            return redirect()->back()->withErrors(['gambar' => 'Gambar tidak ditemukan atau format salah.']);
         }
 
-        return response()->json(['error' => 'Gagal upload file'], 400);
-    }
-
-    // Method untuk simpan aduan
-    public function formComplaint(Request $request)
-    {
-        $request->validate([
-            'text-complaint' => 'required|string|max:255',
-            'lokasi' => 'required|string|max:255',
-        ]);
-
-        // Cek apakah gambar ada di session
-        $filename = session('uploaded_image');
-
-        if (!$filename) {
-            // Redirect back with error if no image was uploaded
-            return redirect()->back()->withErrors(['gambar' => 'Gambar tidak diunggah atau ukurannya melebihi 2 MB.']);
-        }
-
+        // Simpan data ke database
         Complaint::create([
-            'users_id' => Auth::id(),
+            'users_id' => $user->id,
             'text_complaint' => $request->input('text-complaint'),
             'type_complaint' => $this->getRandomComplaintType(),
             'lokasi' => $request->input('lokasi'),
@@ -80,18 +67,15 @@ class UserController extends Controller
             'gambar' => $filename,
         ]);
 
-        // Hapus session setelah disimpan
-        session()->forget('uploaded_image');
-
         return redirect()->back()->with('success-upload', 'Aduan berhasil disimpan!');
     }
-
 
     private function getRandomComplaintType()
     {
         $types = ['tidak urgent', 'kurang urgent', 'urgent', 'sangat urgent'];
         return $types[array_rand($types)];
     }
+
 
     public function getDataRiwayat(Request $request)
     {

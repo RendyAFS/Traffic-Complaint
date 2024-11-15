@@ -24,13 +24,15 @@ class AdminController extends Controller
         return view('page-admin.index', compact('title'));
     }
 
-    public function uploadGambar(Request $request)
+    public function formComplaint(Request $request)
     {
-        // Validasi file gambar
         $request->validate([
-            'gambar' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'text-complaint' => 'required|string|max:255',
+            'lokasi' => 'required|string|max:255',
+            'gambar' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
 
+        $filename = null;
         if ($request->hasFile('gambar')) {
             $user = Auth::user();
             $file = $request->file('gambar');
@@ -39,35 +41,16 @@ class AdminController extends Controller
             $randomCode = '';
             $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
             $charactersLength = strlen($characters);
+
             for ($i = 0; $i < 11; $i++) {
                 $randomCode .= $characters[rand(0, $charactersLength - 1)];
             }
 
             $filename = $user->id . '-' . $user->email . '_' . $user->name . '_' . $randomCode . '_' . $originalName;
 
-            try {
-                $file->storeAs('file-gambar', $filename, 'public');
-            } catch (\Exception $e) {
-                return response()->json(['error' => 'Gagal upload file: ' . $e->getMessage()], 500);
-            }
-
-            session(['uploaded_image' => $filename]);
-            return response()->json(['filename' => $filename]);
+            // Simpan file ke direktori 'file-gambar' di disk 'public'
+            $file->storeAs('file-gambar', $filename, 'public');
         }
-
-        return response()->json(['error' => 'Gagal upload file'], 400);
-    }
-
-    public function formComplaint(Request $request)
-    {
-        $request->validate([
-            'text-complaint' => 'required|string|max:255',
-            'lokasi' => 'required|string|max:255',
-            'gambar' => 'nullable|string',
-        ]);
-
-        // Ambil nama file dari session
-        $filename = session('uploaded_image');
 
         Complaint::create([
             'users_id' => Auth::id(),
@@ -75,11 +58,8 @@ class AdminController extends Controller
             'type_complaint' => $this->getRandomComplaintType(), // Fungsi untuk mendapatkan tipe aduan secara acak
             'lokasi' => $request->input('lokasi'),
             'status' => 'Belum Selesai',
-            'gambar' => $filename, // Gunakan nama file dari session
+            'gambar' => $filename, // Simpan nama file di database
         ]);
-
-        // Hapus session setelah disimpan
-        session()->forget('uploaded_image');
 
         return redirect()->back()->with('success-upload', 'Aduan berhasil disimpan!');
     }
@@ -89,6 +69,7 @@ class AdminController extends Controller
         $types = ['tidak urgent', 'kurang urgent', 'urgent', 'sangat urgent'];
         return $types[array_rand($types)];
     }
+
 
     public function updateStatus(Request $request)
     {
