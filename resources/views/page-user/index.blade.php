@@ -17,29 +17,20 @@
                             </div>
                             <div class="mb-3">
                                 <label for="lokasi" class="form-label fw-bold">Masukkan Lokasi</label>
-                                <input type="text" class="form-control" id="lokasi" name="lokasi"
-                                    placeholder="Masukkan Lokasi">
+                                <input type="text" class="form-control" id="lokasi" name="lokasi" placeholder="Masukkan Lokasi" required>
                             </div>
                         </div>
                         <div class="col-lg-6">
                             <div class="mb-3">
-                                <label for="gambar" class="form-label fw-bold">Masukkan Media
-                                    <span class="text-grey fw-normal fst-italic">(png, jpg, jpeg)</span>
-                                </label>
-                                <input type="file" id="fileGambar" name="gambar" />
+                                <label for="gambar" class="form-label fw-bold">Masukkan Media <span class="text-grey fw-normal fst-italic">(png, jpg, jpeg)</span></label>
+                                <input type="file" id="fileGambar" name="gambar" required>
                             </div>
                         </div>
                     </div>
                     <div class="d-flex justify-content-center flex-row">
-                        <a href="{{ route('user.index') }}" class="btn btnc-red me-2"><i class="bi bi-x-circle-fill"></i>
-                            Reset</a>
-                        <button class="btn btnc-blue me-2" type="button" id="cek-lokasi">
-                            <i class="bi bi-geo-alt-fill"></i>
-                            Cek Lokasi
-                        </button>
-                        <button type="submit" class="btn btnc-green" id="submitButton">
-                            <i class="bi bi-floppy-fill"></i> Simpan
-                        </button>
+                        <a href="{{ route('user.index') }}" class="btn btnc-red me-2"><i class="bi bi-x-circle-fill"></i> Reset</a>
+                        <button class="btn btnc-blue me-2" type="button" id="cek-lokasi"><i class="bi bi-geo-alt-fill"></i> Cek Lokasi</button>
+                        <button type="submit" class="btn btnc-green" id="submitButton"><i class="bi bi-floppy-fill"></i> Simpan</button>
                     </div>
                 </div>
             </form>
@@ -55,71 +46,6 @@
 
 @push('scripts')
     <script type="module">
-        FilePond.create(document.getElementById('fileGambar'));
-        // alert upload
-        @if (session('success-upload'))
-            Swal.fire({
-                icon: 'success',
-                title: 'Berhasil Upload',
-                text: '{{ session('success-upload') }}',
-                confirmButtonText: 'OK',
-                confirmButtonColor: '#0D2454'
-            });
-        @endif
-
-        FilePond.registerPlugin(FilePondPluginImagePreview);
-        const inputElement = document.getElementById('fileGambar');
-        const pond = FilePond.create(inputElement);
-
-        pond.setOptions({
-            server: {
-                process: {
-                    url: '{{ route('upload.gambar.user') }}',
-                    method: 'POST',
-                    headers: {
-                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                    },
-                    onload: (response) => {
-                        const data = JSON.parse(response);
-                        if (data.error) {
-                            Swal.fire({
-                                icon: 'error',
-                                title: 'Upload Failed',
-                                text: data.error,
-                                confirmButtonColor: '#db5858',
-                                confirmButtonText: 'OK'
-                            });
-                        } else {
-                            console.log('File uploaded successfully:', response);
-                        }
-                    },
-                    onerror: (error) => {
-                        console.error('Error detected during upload:', error);
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Upload Failed',
-                            text: 'File tidak sesuai dengan ketentuan atau terjadi kesalahan pada server',
-                            confirmButtonColor: '#db5858',
-                            confirmButtonText: 'OK'
-                        });
-                    }
-                }
-            },
-            beforeAddFile: (file) => {
-                if (file.fileSize > 2 * 1024 * 1024) {
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'File Terlalu Besar',
-                        text: 'Ukuran file melebihi batas maksimum 2 MB',
-                        confirmButtonColor: '#db5858',
-                        confirmButtonText: 'OK'
-                    });
-                    return false;
-                }
-                return true;
-            }
-        });
-
         // Geolocation
         document.getElementById("cek-lokasi").addEventListener("click", function() {
             // Cek status izin geolokasi
@@ -213,18 +139,5 @@
             }
             Swal.fire("Gagal", errorMessage, "error");
         }
-
-
-        document.addEventListener("DOMContentLoaded", function() {
-            @if ($errors->has('gambar'))
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Gagal Menyimpan Aduan',
-                    text: '{{ $errors->first('gambar') }}',
-                    confirmButtonColor: '#db5858',
-                    confirmButtonText: 'OK'
-                });
-            @endif
-        });
     </script>
 @endpush

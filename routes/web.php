@@ -31,7 +31,6 @@ Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name
 Route::middleware(['auth', 'checklevel:Admin'])->group(function () {
     Route::get('/admin/index', [AdminController::class, 'index'])->name('admin.index');
     Route::post('/upload-complaint-admin', [AdminController::class, 'formComplaint'])->name('form.complaint.admin');
-    Route::post('/upload-gambar-admin', [AdminController::class, 'uploadGambar'])->name('upload.gambar.admin');
     Route::get('/admin/complaints/data', [AdminController::class, 'getDataComplaint'])->name('getDataComplaint');
 
     Route::post('/update-status', [AdminController::class, 'updateStatus'])->name('update.status');
@@ -46,6 +45,5 @@ Route::middleware(['auth', 'checklevel:Admin'])->group(function () {
 Route::middleware(['auth', 'checklevel:User'])->group(function () {
     Route::get('/user/index', [UserController::class, 'index'])->name('user.index');
     Route::post('/upload-complaint-user', [UserController::class, 'formComplaint'])->name('form.complaint.user');
-    Route::post('/upload-gambar-user', [UserController::class, 'uploadGambar'])->name('upload.gambar.user');
     Route::get('/user/complaints/data', [UserController::class, 'getDataRiwayat'])->name('getDataRiwayat');
 });
