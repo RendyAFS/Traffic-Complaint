@@ -21,4 +21,3 @@
         Laporkan Masalah
     </a>
 </div>
-@include('lottie.script')

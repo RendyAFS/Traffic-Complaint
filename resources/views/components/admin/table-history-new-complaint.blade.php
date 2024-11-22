@@ -1,4 +1,4 @@
-<div class="card p-4 rounded-4 shadow" data-aos="zoom-in">
+<div class="card p-4 rounded-4 border-0">
     <table id="example" class="table table-hover" style="width:100%">
         <thead>
             <tr>
@@ -57,12 +57,24 @@
     $('#example').DataTable({
         processing: true,
         serverSide: true,
-        responsive: true,
-        ajax: '{{ route('getDataComplaint') }}',
+        responsive: {
+            details: {
+                display: DataTable.Responsive.display.modal({
+                    header: function(row) {
+                        var data = row.data();
+                        return 'Details Table';
+                    }
+                }),
+                renderer: DataTable.Responsive.renderer.tableAll({
+                    tableClass: 'table'
+                })
+            }
+        },
+        ajax: '{{ route('getDataNewComplaint') }}',
         columns: [{
                 data: 'no',
                 name: 'no',
-                className: 'text-center align-middle'
+                className: ' align-middle'
             },
             {
                 data: 'user.name',
@@ -88,7 +100,7 @@
             {
                 data: 'type_complaint',
                 name: 'type_complaint',
-                className: 'align-middle text-center',
+                className: 'align-middle ',
                 render: function(data, type, row) {
                     if (data === 'sangat urgent') {
                         return '<span class="badge text-bgc-red">Sangat Urgent</span>';
@@ -106,7 +118,7 @@
             {
                 data: 'type_complaint',
                 name: 'type_complaint',
-                className: 'align-middle text-center',
+                className: 'align-middle ',
                 render: function(data, type, row) {
                     // Logika untuk menentukan skala prioritas
                     switch (data) {
@@ -126,7 +138,7 @@
             {
                 data: 'status',
                 name: 'status',
-                className: 'align-middle text-center',
+                className: 'align-middle ',
                 render: function(data, type, row) {
                     // Menambahkan class berdasarkan status
                     let statusClass =
@@ -150,7 +162,7 @@
             {
                 data: 'gambar',
                 name: 'gambar',
-                className: 'text-center align-middle',
+                className: ' align-middle',
                 orderable: false,
                 searchable: false,
                 render: function(data, type, row) {

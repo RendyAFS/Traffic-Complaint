@@ -2,65 +2,89 @@
 
 @section('content')
     <div class="container py-4">
-        @include('components.admin.modal-upload-file-aduan')
+        @include('components.admin.action-button')
         <div class="mb-4">
             <div class="mb-3" data-aos="fade-up">
                 <span class="fs-3 fw-bold">Dashboard</span>
             </div>
-            <form action="{{ route('form.complaint.admin') }}" method="POST" enctype="multipart/form-data" data-aos="zoom-in">
-                @csrf
-                <div class="card px-4 py-4 border-0 shadow rounded-4">
-                    <div class="row">
-                        <div class="col-lg-6">
-                            <div class="mb-3">
-                                <label for="text-complaint" class="form-label fw-bold">Masukkan Aduan</label>
-                                <textarea class="form-control" id="text-complaint" name="text-complaint" rows="3" required></textarea>
-                            </div>
-                            <div class="mb-3">
-                                <label for="lokasi" class="form-label fw-bold">Masukkan Lokasi</label>
-                                <input type="text" class="form-control" id="lokasi" name="lokasi" required />
-                            </div>
-                        </div>
-                        <div class="col-lg-6">
-                            <div class="mb-3">
-                                <label for="gambar" class="form-label fw-bold">Masukkan Media <span
-                                        class="text-grey fw-normal fst-italic">(png, jpg, jpeg) max 2Mb</span></label><br>
-                                <input type="file" id="fileGambar" name="gambar" class="border w-100 p-3 rounded-2"
-                                    required>
+            <div class="row">
+                @foreach ($statuses as $index => $status)
+                    <div class="col-12 col-xl-3 mb-3">
+                        <div class="card border-0 shadow-sm p-3 rounded-4" style="width: 100%" data-aos="fade-right"
+                            data-aos-delay="{{ $index * 300 }}">
+                            <div class="card-body">
+                                <p class="card-title fs-5 d-flex align-items-center gap-2">
+                                    @if ($status['status'] === 'Aduan Masuk')
+                                        <i class="bi bi-arrow-down-circle-fill text-danger"></i>
+                                        <span class="badge text-bg-danger">{{ $status['status'] }}</span>
+                                    @elseif ($status['status'] === 'Aduan Ditangani')
+                                        <i class="bi bi-exclamation-circle-fill text-primary"></i>
+                                        <span class="badge text-bg-primary">{{ $status['status'] }}</span>
+                                    @elseif ($status['status'] === 'Aduan Selesai')
+                                        <i class="bi bi-check-circle-fill text-success"></i>
+                                        <span class="badge text-bg-success">{{ $status['status'] }}</span>
+                                    @endif
+                                </p>
+                                <h6 class="card-subtitle mb-2 text-body-secondary">Jumlah</h6>
+                                <p class="card-text fs-3 text-end fw-bold">{{ $status['total'] }}</p>
                             </div>
                         </div>
                     </div>
-                    <div class="d-flex justify-content-center flex-row">
-                        <a href="{{ route('admin.index') }}" class="btn btnc-red me-2"><i class="bi bi-x-circle-fill"></i>
-                            Reset</a>
-                        <button type="submit" class="btn btnc-green"><i class="bi bi-floppy-fill"></i> Simpan</button>
+                @endforeach
+
+                <!-- Card untuk Total Semua Aduan -->
+                <div class="col-12 col-xl-3 mb-3">
+                    <div class="card border-0 shadow p-3 rounded-4 bg-warning" style="width: 100%" data-aos="fade-right"
+                            data-aos-delay="900">
+                        <div class="card-body">
+                            <h5 class="card-title fw-bold">Total Semua Aduan</h5>
+                            <h6 class="card-subtitle mb-2">Total</h6>
+                            <p class="card-text fs-3 text-end fw-bold">{{ $totalComplaints }}</p>
+                        </div>
                     </div>
                 </div>
-            </form>
+            </div>
         </div>
-    </div>
-@endsection
 
-@push('scripts')
-    <script type="module">
-        // alert upload
-        @if (session('success-upload'))
-            Swal.fire({
-                icon: 'success',
-                title: 'Berhasil Upload',
-                text: '{{ session('success-upload') }}',
-                confirmButtonText: 'OK',
-                confirmButtonColor: '#0D2454'
+        @include('components.admin.table-history-all-complaint  ')
+    @endsection
+
+    @push('scripts')
+        <script type="module">
+            $(document).on('change', '.status-select', function() {
+                var status = $(this).val();
+                var id = $(this).data('id');
+
+                $.ajax({
+                    url: '{{ route('update.status') }}', // URL untuk mengupdate status
+                    method: 'POST',
+                    data: {
+                        id: id,
+                        status: status,
+                        _token: '{{ csrf_token() }}' // Pastikan token CSRF disertakan
+                    },
+                    success: function(response) {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Berhasil',
+                            text: response.message,
+                            confirmButtonText: 'OK',
+                            confirmButtonColor: '#0D2454'
+                        }).then(() => {
+                            window.location.href = response.redirect; // Redirect ke halaman admin
+                        });
+                    },
+                    error: function(xhr) {
+                        // Tindakan jika ada kesalahan
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Terjadi kesalahan',
+                            text: 'Gagal memperbarui status.',
+                            confirmButtonText: 'OK',
+                            confirmButtonColor: '#0D2454'
+                        });
+                    }
+                });
             });
-        @endif
-        @if (session('success-update'))
-            Swal.fire({
-                icon: 'success',
-                title: 'Berhasil Upload',
-                text: '{{ session('success-upload') }}',
-                confirmButtonText: 'OK',
-                confirmButtonColor: '#0D2454'
-            });
-        @endif
-    </script>
-@endpush
+        </script>
+    @endpush

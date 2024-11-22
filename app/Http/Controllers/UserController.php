@@ -23,56 +23,61 @@ class UserController extends Controller
     public function formComplaint(Request $request)
     {
         // Validasi input
-        $request->validate([
-            'text-complaint' => 'required|string|max:255',
-            'lokasi' => 'required|string|max:255',
-            'gambar' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048', // Validasi gambar
-        ], [
-            'gambar.required' => 'Gambar harus diunggah.',
-            'gambar.image' => 'File yang diunggah harus berupa gambar.',
-            'gambar.mimes' => 'Gambar harus berformat jpeg, png, jpg, atau gif.',
-            'gambar.max' => 'Gambar maksimal berukuran 2MB.',
-        ]);
+        $request->validate(
+            [
+                'text-complaint' => 'required|string|max:255',
+                'lokasi' => 'required|string|max:255',
+                'gambar' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            ],
+            [
+                'text-complaint.required' => 'Kolom teks aduan wajib diisi.',
+                'lokasi.required' => 'Kolom lokasi wajib diisi.',
+                'gambar.image' => 'File harus berupa gambar.',
+                'gambar.mimes' => 'Format file yang diperbolehkan hanya jpeg, png, jpg, atau gif.',
+                'gambar.max' => 'Ukuran gambar tidak boleh lebih dari 2MB.',
+                'gambar.uploaded' => 'Gagal mengunggah file. Ukuran file mungkin melebihi batas maksimal.', // Tambahan untuk pesan "uploaded"
+            ]
+        );
 
-        $user = Auth::user();
+        try {
+            $filename = null;
 
-        // Upload gambar jika ada
-        if ($request->hasFile('gambar')) {
-            $file = $request->file('gambar');
-            $originalName = $file->getClientOriginalName();
+            // Jika ada file gambar yang diunggah
+            if ($request->hasFile('gambar')) {
+                $user = Auth::user();
+                $file = $request->file('gambar');
+                $originalName = $file->getClientOriginalName();
 
-            // Generate filename unik
-            $randomCode = '';
-            $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
-            $charactersLength = strlen($characters);
+                $randomCode = '';
+                $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+                $charactersLength = strlen($characters);
 
-            for ($i = 0; $i < 11; $i++) {
-                $randomCode .= $characters[rand(0, $charactersLength - 1)];
-            }
+                for ($i = 0; $i < 11; $i++) {
+                    $randomCode .= $characters[rand(0, $charactersLength - 1)];
+                }
 
-            $filename = $user->id . '-' . $user->email . '_' . $user->name . '_' . $randomCode . '_' . $originalName;
+                $filename = $user->id . '-' . $user->email . '_' . $user->name . '_' . $randomCode . '_' . $originalName;
 
-            // Simpan gambar
-            try {
+                // Simpan file ke direktori 'file-gambar' di disk 'public'
                 $file->storeAs('file-gambar', $filename, 'public');
-            } catch (\Exception $e) {
-                return redirect()->back()->withErrors(['gambar' => 'Gagal upload file: ' . $e->getMessage()]);
             }
-        } else {
-            return redirect()->back()->withErrors(['gambar' => 'Gambar tidak ditemukan atau format salah.']);
+
+            // Simpan data ke database
+            Complaint::create([
+                'users_id' => Auth::id(),
+                'text_complaint' => $request->input('text-complaint'),
+                'type_complaint' => $this->getRandomComplaintType(), // Fungsi untuk mendapatkan tipe aduan secara acak
+                'lokasi' => $request->input('lokasi'),
+                'status' => 'Aduan Masuk',
+                'gambar' => $filename, // Simpan nama file di database
+            ]);
+
+            // Redirect dengan pesan sukses
+            return redirect()->back()->with('success-formComplaint', 'Aduan berhasil disimpan!');
+        } catch (\Exception $e) {
+            // Redirect dengan pesan error
+            return redirect()->back()->with('error-formComplaint', 'Terjadi kesalahan saat menyimpan aduan!');
         }
-
-        // Simpan data ke database
-        Complaint::create([
-            'users_id' => $user->id,
-            'text_complaint' => $request->input('text-complaint'),
-            'type_complaint' => $this->getRandomComplaintType(),
-            'lokasi' => $request->input('lokasi'),
-            'status' => 'Aduan Masuk',
-            'gambar' => $filename,
-        ]);
-
-        return redirect()->back()->with('success-upload', 'Aduan berhasil disimpan!');
     }
 
 

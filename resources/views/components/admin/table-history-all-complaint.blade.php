@@ -70,7 +70,7 @@
                 })
             }
         },
-        ajax: '{{ route('getDataProcessComplaint') }}',
+        ajax: '{{ route('getDataAllComplaint') }}',
         columns: [{
                 data: 'no',
                 name: 'no',
@@ -148,7 +148,7 @@
                             '') +
                         ' class="text-primary fw-bold">Aduan Ditangani</option>' +
                         '<option value="Aduan Selesai"' + (data === 'Aduan Selesai' ? ' selected' :
-                            '') +
+                        '') +
                         ' class="text-success fw-bold">Aduan Selesai</option>' +
                         '</select>';
                 }

@@ -171,16 +171,3 @@ body {
     background: var(--secondary-color);
 }
 
-.filepond--root {
-    height: 180px;
-    border-radius: 10px;
-}
-
-.text-justify {
-    text-align: justify;
-}
-
-.lottie-animation {
-    width: 5rem;
-    height: 5rem;
-}
