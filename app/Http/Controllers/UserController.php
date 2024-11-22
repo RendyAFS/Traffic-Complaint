@@ -68,7 +68,7 @@ class UserController extends Controller
             'text_complaint' => $request->input('text-complaint'),
             'type_complaint' => $this->getRandomComplaintType(),
             'lokasi' => $request->input('lokasi'),
-            'status' => 'Belum Selesai',
+            'status' => 'Aduan Masuk',
             'gambar' => $filename,
         ]);
 

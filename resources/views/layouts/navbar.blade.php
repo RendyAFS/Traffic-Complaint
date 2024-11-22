@@ -17,7 +17,15 @@
                         @if (!Request::is('/'))
                             <li class="nav-item">
                                 <a class="nav-link {{ Route::is('admin.index') ? 'fw-bold font-primary nav-active' : '' }}" aria-current="page"
-                                    href="{{ route('admin.index') }}">Aduan</a>
+                                    href="{{ route('admin.index') }}">Dashboard</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link {{ Route::is('admin.new.complaint') ? 'fw-bold font-primary nav-active' : '' }}" aria-current="page"
+                                    href="{{ route('admin.new.complaint') }}">Aduan Masuk</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link {{ Route::is('admin.process.complaint') ? 'fw-bold font-primary nav-active' : '' }}" aria-current="page"
+                                    href="{{ route('admin.process.complaint') }}">Aduan Ditangani</a>
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link {{ Route::is('admin.done.complaint') ? 'fw-bold font-primary nav-active' : '' }}" aria-current="page"

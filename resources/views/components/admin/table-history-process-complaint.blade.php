@@ -59,7 +59,7 @@
         processing: true,
         serverSide: true,
         responsive: true,
-        ajax: '{{ route('getDataDoneComplaint') }}',
+        ajax: '{{ route('getDataProcessComplaint') }}',
         columns: [{
                 data: 'no',
                 name: 'no',

@@ -129,14 +129,21 @@
                 className: 'align-middle text-center',
                 render: function(data, type, row) {
                     // Menambahkan class berdasarkan status
-                    let statusClass = data === 'Selesai' ? 'text-success fw-bold' :
+                    let statusClass =
+                        data === 'Aduan Selesai' ? 'text-success fw-bold' :
+                        data === 'Aduan Ditangani' ? 'text-primary fw-bold' :
                         'text-danger fw-bold';
+
                     return '<select class="form-select status-select border-0 ' + statusClass +
                         '" data-id="' + row.id + '">' +
-                        '<option value="Belum Selesai"' + (data === 'Belum Selesai' ? ' selected' :
-                            '') + ' class="text-danger fw-bold">Belum Selesai</option>' +
-                        '<option value="Selesai"' + (data === 'Selesai' ? ' selected' : '') +
-                        ' class="text-success fw-bold">Selesai</option>' +
+                        '<option value="Aduan Masuk"' + (data === 'Aduan Masuk' ? ' selected' : '') +
+                        ' class="text-danger fw-bold">Aduan Masuk</option>' +
+                        '<option value="Aduan Ditangani"' + (data === 'Aduan Ditangani' ? ' selected' :
+                            '') +
+                        ' class="text-primary fw-bold">Aduan Ditangani</option>' +
+                        '<option value="Aduan Selesai"' + (data === 'Aduan Selesai' ? ' selected' :
+                        '') +
+                        ' class="text-success fw-bold">Aduan Selesai</option>' +
                         '</select>';
                 }
             },

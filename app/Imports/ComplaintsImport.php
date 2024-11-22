@@ -15,7 +15,7 @@ class ComplaintsImport implements ToModel, WithHeadingRow
             'text_complaint' => $row['text_complaint'],
             'type_complaint' => $row['type_complaint'],
             'lokasi' => $row['lokasi'],
-            'status' => 'Belum Selesai',
+            'status' => 'Aduan Masuk',
             'gambar' => null,
         ]);
     }

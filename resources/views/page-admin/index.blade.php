@@ -5,7 +5,7 @@
         @include('components.admin.modal-upload-file-aduan')
         <div class="mb-4">
             <div class="mb-3" data-aos="fade-up">
-                <span class="fs-3 fw-bold">Input Data Aduan</span>
+                <span class="fs-3 fw-bold">Dashboard</span>
             </div>
             <form action="{{ route('form.complaint.admin') }}" method="POST" enctype="multipart/form-data" data-aos="zoom-in">
                 @csrf
@@ -37,12 +37,6 @@
                     </div>
                 </div>
             </form>
-        </div>
-        <div class="mb-4">
-            <div class="mb-3" data-aos="fade-right">
-                <span class="fs-3 fw-bold">Tabel Riwayat Aduan</span>
-            </div>
-            @include('components.admin.table-history-complaint')
         </div>
     </div>
 @endsection

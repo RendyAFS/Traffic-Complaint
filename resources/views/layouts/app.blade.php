@@ -14,13 +14,6 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
 
-    {{-- Filepond --}}
-    <link href="https://unpkg.com/filepond@^4/dist/filepond.css" rel="stylesheet" />
-    <link href="https://unpkg.com/filepond/dist/filepond.css" rel="stylesheet" />
-    {{-- Filepond Preview --}}
-    <link href="https://unpkg.com/filepond-plugin-image-preview/dist/filepond-plugin-image-preview.css"
-        rel="stylesheet" />
-
     {{-- Datatables --}}
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fomantic-ui/2.9.2/semantic.min.css">
     <link rel="stylesheet" href="https://cdn.datatables.net/2.1.7/css/dataTables.semanticui.css">
@@ -64,11 +57,6 @@
     {{-- AOS --}}
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
 
-    {{-- Filepond --}}
-    <script src="https://unpkg.com/filepond@^4/dist/filepond.js"></script>
-    <script src="https://unpkg.com/filepond/dist/filepond.js"></script>
-    {{-- Filepond preview --}}
-    <script src="https://unpkg.com/filepond-plugin-image-preview/dist/filepond-plugin-image-preview.js"></script>
 
     {{-- Datatable --}}
     <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
@@ -78,9 +66,9 @@
     <script src="https://cdn.datatables.net/responsive/3.0.3/js/dataTables.responsive.js"></script>
     <script src="https://cdn.datatables.net/responsive/3.0.3/js/responsive.semanticui.js"></script>
 
+    <script>
+        AOS.init();
+    </script>
 </body>
-<script>
-    AOS.init();
-</script>
 
 </html>
