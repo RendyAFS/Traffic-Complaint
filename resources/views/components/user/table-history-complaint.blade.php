@@ -3,9 +3,10 @@
         <thead>
             <tr>
                 <th>No.</th>
-                <th class="w-50 align-middle">Aduan</th>
+                <th class="w-25 align-middle">Aduan</th>
+                <th class="w-25 align-middle">status</th>
                 <th class="w-25 align-middle">Gambar</th>
-                <th class="align-middle">Tanggal & Waktu</th>
+                <th class="w-25 align-middle">Tanggal & Waktu</th>
             </tr>
         </thead>
     </table>
@@ -38,6 +39,21 @@
                 data: 'text_complaint',
                 name: 'text_complaint',
                 className: 'align-middle'
+            },
+            {
+                data: 'status',
+                name: 'status',
+                className: 'align-middle',
+                render: function(data, type, row) {
+                    // Menambahkan class berdasarkan status
+                    let statusClass =
+                        data === 'Aduan Selesai' ? 'badge bg-success' :
+                        data === 'Aduan Ditangani' ? 'badge bg-primary' :
+                        'badge bg-danger';
+
+                    // Mengembalikan badge sesuai status
+                    return '<span class="' + statusClass + '">' + data + '</span>';
+                }
             },
             {
                 data: 'gambar',

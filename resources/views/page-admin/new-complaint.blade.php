@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
-    <div class="container py-4">
+    <div class="px-1 m-1 py-1 px-md-5 m-md-5 fill-content">
         <div class="mb-4">
             <form action="{{ route('form.complaint.admin') }}" method="POST" enctype="multipart/form-data" data-aos="zoom-in">
                 @csrf
@@ -21,8 +21,7 @@
                             <div class="mb-3">
                                 <label for="gambar" class="form-label fw-bold">Masukkan Media <span
                                         class="text-grey fw-normal fst-italic">(png, jpg, jpeg) max 2Mb</span></label><br>
-                                <input type="file" id="fileGambar" name="gambar" class="border w-100 p-3 rounded-2"
-                                    required>
+                                <input type="file" id="fileGambar" name="gambar" class="border w-100 p-3 rounded-2">
                             </div>
                         </div>
                     </div>

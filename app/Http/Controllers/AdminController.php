@@ -18,38 +18,6 @@ class AdminController extends Controller
     {
         $this->middleware('auth');
     }
-    public function getDataAllComplaint(Request $request)
-    {
-        // Query dengan urutan prioritas pada 'type_complaint'
-        $query = Complaint::with('user')
-            ->orderByRaw("CASE
-            WHEN type_complaint = 'sangat urgent' THEN 1
-            WHEN type_complaint = 'urgent' THEN 2
-            WHEN type_complaint = 'kurang urgent' THEN 3
-            WHEN type_complaint = 'tidak urgent' THEN 4
-            ELSE 5 END")
-            ->where('status', 'Aduan Masuk')
-            ->orderBy('created_at', 'asc');
-
-        return datatables()->of($query)
-            ->addColumn('no', function ($row) {
-                static $counter = 1;
-                return $counter++;
-            })
-            ->addColumn('status', function ($row) {
-                // Mengembalikan status mentah untuk di-render di frontend
-                return $row->status;
-            })
-            ->addColumn('gambar', function ($row) {
-                // Mengembalikan nama file gambar jika ada
-                return $row->gambar;
-            })
-            ->editColumn('created_at', function ($row) {
-                // Kembalikan data 'created_at' mentah
-                return $row->created_at;
-            })
-            ->make(true);
-    }
 
     // Index
     public function index()
@@ -73,12 +41,59 @@ class AdminController extends Controller
             ];
         });
 
+        // Ambil data category_complaint
+        $categoryComplaints = Complaint::select('category_complaint')->distinct()->take(5)->get();
+
+
         // Hitung total semua aduan
         $totalComplaints = array_sum(array_column($statuses->toArray(), 'total'));
 
-        return view('page-admin.index', compact('title', 'statuses', 'totalComplaints'));
+        return view('page-admin.index', compact('title', 'statuses', 'totalComplaints', 'categoryComplaints'));
     }
 
+    public function getDataAllComplaint(Request $request)
+    {
+        $query = Complaint::with('user')
+            ->select('complaints.*') // Pastikan hanya kolom complaints yang dipilih
+            ->leftJoin('users', 'complaints.users_id', '=', 'users.id')
+            ->orderByRaw("
+            CASE
+                WHEN type_complaint = 'sangat urgent' THEN 1
+                WHEN type_complaint = 'urgent' THEN 2
+                WHEN type_complaint = 'kurang urgent' THEN 3
+                WHEN type_complaint = 'tidak urgent' THEN 4
+                ELSE 5
+            END
+        ")
+            ->orderBy('complaints.created_at', 'asc'); // Tambahkan prefiks tabel untuk created_at
+
+        // Filter kategori aduan (category_complaint)
+        if ($request->has('category_complaint') && $request->category_complaint) {
+            $query->where('category_complaint', $request->category_complaint);
+        }
+
+        // Filter rentang tanggal pada complaints.created_at
+        if ($request->has('date_range') && $request->date_range) {
+            $dates = explode(' to ', $request->date_range);
+            $startDate = $dates[0] ?? null;
+            $endDate = $dates[1] ?? null;
+
+            if ($startDate && !$endDate) {
+                // Jika hanya satu tanggal dipilih, filter pada tanggal tersebut saja
+                $query->whereDate('complaints.created_at', $startDate);
+            } elseif ($startDate && $endDate) {
+                // Jika rentang tanggal diberikan, filter di antara tanggal tersebut
+                $query->whereBetween('complaints.created_at', [$startDate, $endDate]);
+            }
+        }
+
+        return datatables()->of($query)
+            ->addColumn('no', function ($row) {
+                static $counter = 1;
+                return $counter++;
+            })
+            ->make(true);
+    }
 
     public function formComplaint(Request $request)
     {
@@ -143,16 +158,30 @@ class AdminController extends Controller
             'status' => 'required|string', // Sesuaikan dengan opsi yang ada
         ]);
 
-        // Temukan aduan berdasarkan ID dan perbarui statusnya
+        // Temukan aduan berdasarkan ID
         $complaint = Complaint::findOrFail($request->id);
+
+        // Simpan status baru pada aduan yang ditemukan
         $complaint->status = $request->status;
         $complaint->save();
 
+        // Perbarui semua aduan dengan category_status yang sama dalam rentang waktu 3 jam
+        if ($complaint->category_complaint && $complaint->created_at) { // Pastikan category_complaint dan created_at ada
+            $startTime = $complaint->created_at->subHours(3); // Rentang 3 jam ke belakang
+            $endTime = $complaint->created_at->addHours(3);  // Rentang 3 jam ke depan
+
+            Complaint::where('category_complaint', $complaint->category_complaint)
+                ->where('id', '!=', $complaint->id) // Hindari memperbarui data yang sama
+                ->whereBetween('created_at', [$startTime, $endTime]) // Filter rentang waktu 3 jam
+                ->update(['status' => $request->status]);
+        }
+
         return response()->json([
-            'message' => 'Aduan berhasil diupdate!',
+            'message' => 'Aduan berhasil diupdate, termasuk semua aduan dengan kategori dan rentang waktu yang sama!',
             'redirect' => url()->previous(), // Mengarahkan kembali ke halaman sebelumnya
         ]);
     }
+
 
     public function uploadFileAduan(Request $request)
     {
@@ -183,21 +212,26 @@ class AdminController extends Controller
 
     public function indexNewComplaint()
     {
-        $title = 'Nee Complaint';
+        $title = 'New Complaint';
         return view('page-admin.new-complaint', compact('title'));
     }
     public function getDataNewComplaint(Request $request)
     {
         // Query dengan urutan prioritas pada 'type_complaint'
-        $query = Complaint::with('user')
-            ->orderByRaw("CASE
-            WHEN type_complaint = 'sangat urgent' THEN 1
-            WHEN type_complaint = 'urgent' THEN 2
-            WHEN type_complaint = 'kurang urgent' THEN 3
-            WHEN type_complaint = 'tidak urgent' THEN 4
-            ELSE 5 END")
-            ->where('status', 'Aduan Masuk')
-            ->orderBy('created_at', 'asc');
+        $query = Complaint::with('user') // Eager load untuk menghindari N+1 query
+            ->select('complaints.*') // Pastikan hanya kolom dari complaints yang diambil langsung
+            ->orderByRaw("
+            CASE
+                WHEN type_complaint = 'sangat urgent' THEN 1
+                WHEN type_complaint = 'urgent' THEN 2
+                WHEN type_complaint = 'kurang urgent' THEN 3
+                WHEN type_complaint = 'tidak urgent' THEN 4
+                ELSE 5
+            END
+        ") // Prioritas berdasarkan type_complaint
+            ->where('status', 'Aduan Masuk') // Filter hanya Aduan Masuk
+            ->orderBy('created_at', 'asc'); // Urutkan berdasarkan created_at secara ascending
+
 
         return datatables()->of($query)
             ->addColumn('no', function ($row) {
@@ -228,16 +262,20 @@ class AdminController extends Controller
 
     public function getDataProcessComplaint(Request $request)
     {
-        // Query dengan urutan prioritas pada 'type_complaint'
-        $query = Complaint::with('user')
-            ->orderByRaw("CASE
+        $query = Complaint::with('user') // Eager load untuk menghindari N+1 query
+            ->select('complaints.*') // Pastikan hanya kolom dari complaints yang diambil langsung
+            ->orderByRaw("
+        CASE
             WHEN type_complaint = 'sangat urgent' THEN 1
             WHEN type_complaint = 'urgent' THEN 2
             WHEN type_complaint = 'kurang urgent' THEN 3
             WHEN type_complaint = 'tidak urgent' THEN 4
-            ELSE 5 END")
-            ->where('status', 'Aduan Ditangani')
-            ->orderBy('created_at', 'asc');
+            ELSE 5
+        END
+    ") // Prioritas berdasarkan type_complaint
+            ->where('status', 'Aduan Ditangani') // Filter hanya Aduan Masuk
+            ->orderBy('created_at', 'asc'); // Urutkan berdasarkan created_at secara ascending
+
 
         return datatables()->of($query)
             ->addColumn('no', function ($row) {
@@ -269,15 +307,20 @@ class AdminController extends Controller
     public function getDataDoneComplaint(Request $request)
     {
         // Query dengan urutan prioritas pada 'type_complaint'
-        $query = Complaint::with('user')
-            ->orderByRaw("CASE
+        $query = Complaint::with('user') // Eager load untuk menghindari N+1 query
+            ->select('complaints.*') // Pastikan hanya kolom dari complaints yang diambil langsung
+            ->orderByRaw("
+        CASE
             WHEN type_complaint = 'sangat urgent' THEN 1
             WHEN type_complaint = 'urgent' THEN 2
             WHEN type_complaint = 'kurang urgent' THEN 3
             WHEN type_complaint = 'tidak urgent' THEN 4
-            ELSE 5 END")
-            ->where('status', 'Aduan Selesai')
-            ->orderBy('created_at', 'asc');
+            ELSE 5
+        END
+    ") // Prioritas berdasarkan type_complaint
+            ->where('status', 'Aduan Selesai') // Filter hanya Aduan Masuk
+            ->orderBy('created_at', 'asc'); // Urutkan berdasarkan created_at secara ascending
+
 
         return datatables()->of($query)
             ->addColumn('no', function ($row) {

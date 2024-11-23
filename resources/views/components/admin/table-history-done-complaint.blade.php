@@ -74,26 +74,37 @@
         columns: [{
                 data: 'no',
                 name: 'no',
+                orderable: false,
                 className: ' align-middle'
             },
             {
                 data: 'user.name',
                 name: 'user.name',
+                orderable: false,
                 className: 'align-middle'
             },
             {
                 data: 'lokasi',
                 name: 'lokasi',
-                className: 'align-middle'
+                orderable: false,
+                className: 'align-middle',
+                render: function(data, type, row) {
+                    // Membuat link ke Google Maps dengan pencarian berdasarkan data lokasi
+                    var googleMapsUrl = 'https://www.google.com/maps/search/?api=1&query=' +
+                        encodeURIComponent(data);
+                    return '<a href="' + googleMapsUrl + '" target="_blank">' + data + '</a>';
+                }
             },
             {
                 data: 'text_complaint',
                 name: 'text_complaint',
+                orderable: false,
                 className: 'align-middle'
             },
             {
                 data: 'type_complaint',
                 name: 'type_complaint',
+                orderable: false,
                 className: 'align-middle ',
                 render: function(data, type, row) {
                     if (data === 'sangat urgent') {
@@ -112,6 +123,7 @@
             {
                 data: 'type_complaint',
                 name: 'type_complaint',
+                orderable: false,
                 className: 'align-middle ',
                 render: function(data, type, row) {
                     // Logika untuk menentukan skala prioritas
@@ -132,6 +144,7 @@
             {
                 data: 'status',
                 name: 'status',
+                orderable: false,
                 className: 'align-middle ',
                 render: function(data, type, row) {
                     // Menambahkan class berdasarkan status
@@ -148,7 +161,7 @@
                             '') +
                         ' class="text-primary fw-bold">Aduan Ditangani</option>' +
                         '<option value="Aduan Selesai"' + (data === 'Aduan Selesai' ? ' selected' :
-                            '') +
+                        '') +
                         ' class="text-success fw-bold">Aduan Selesai</option>' +
                         '</select>';
                 }
@@ -156,6 +169,7 @@
             {
                 data: 'gambar',
                 name: 'gambar',
+                orderable: false,
                 className: ' align-middle',
                 orderable: false,
                 searchable: false,
@@ -173,6 +187,7 @@
             {
                 data: 'created_at',
                 name: 'created_at',
+                orderable: false,
                 className: 'align-middle',
                 render: function(data, type, row) {
                     if (!data) return '';

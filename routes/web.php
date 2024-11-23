@@ -30,6 +30,7 @@ Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name
 // Route untuk Admin
 Route::middleware(['auth', 'checklevel:Admin'])->group(function () {
     Route::get('/admin/index', [AdminController::class, 'index'])->name('admin.index');
+
     Route::get('/admin/all-complaints/data', [AdminController::class, 'getDataAllComplaint'])->name('getDataAllComplaint');
     Route::post('/upload-complaint-admin', [AdminController::class, 'formComplaint'])->name('form.complaint.admin');
     Route::post('/update-status', [AdminController::class, 'updateStatus'])->name('update.status');

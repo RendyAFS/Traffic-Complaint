@@ -17,19 +17,19 @@
                         @if (!Request::is('/'))
                             <li class="nav-item">
                                 <a class="nav-link {{ Route::is('admin.index') ? 'fw-bold font-primary nav-active' : '' }}"
-                                    aria-current="page" href="{{ route('admin.index') }}">Dashboard</a>
+                                    aria-current="page" href="{{ route('admin.index') }}"><i class="bi bi-house-fill"></i> Dashboard</a>
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link {{ Route::is('admin.new.complaint') ? 'fw-bold font-primary nav-active' : '' }}"
-                                    aria-current="page" href="{{ route('admin.new.complaint') }}">Aduan Masuk</a>
+                                    aria-current="page" href="{{ route('admin.new.complaint') }}"><i class="bi bi-send-arrow-down-fill"></i> Aduan Masuk</a>
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link {{ Route::is('admin.process.complaint') ? 'fw-bold font-primary nav-active' : '' }}"
-                                    aria-current="page" href="{{ route('admin.process.complaint') }}">Aduan Ditangani</a>
+                                    aria-current="page" href="{{ route('admin.process.complaint') }}"><i class="bi bi-send-exclamation-fill"></i> Aduan Ditangani</a>
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link {{ Route::is('admin.done.complaint') ? 'fw-bold font-primary nav-active' : '' }}"
-                                    aria-current="page" href="{{ route('admin.done.complaint') }}">Aduan Selesai</a>
+                                    aria-current="page" href="{{ route('admin.done.complaint') }}"><i class="bi bi-send-check-fill"></i> Aduan Selesai</a>
                             </li>
                         @endif
                     @endif

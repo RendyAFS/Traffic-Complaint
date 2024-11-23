@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
-    <div class="container py-4">
+    <div class="px-1 m-1 py-1 px-md-5 m-md-5 fill-content">
         @include('components.admin.action-button')
         <div class="mb-4">
             <div class="mb-3" data-aos="fade-up">
@@ -35,7 +35,7 @@
                 <!-- Card untuk Total Semua Aduan -->
                 <div class="col-12 col-xl-3 mb-3">
                     <div class="card border-0 shadow p-3 rounded-4 bg-warning" style="width: 100%" data-aos="fade-right"
-                            data-aos-delay="900">
+                        data-aos-delay="900">
                         <div class="card-body">
                             <h5 class="card-title fw-bold">Total Semua Aduan</h5>
                             <h6 class="card-subtitle mb-2">Total</h6>
@@ -44,13 +44,50 @@
                     </div>
                 </div>
             </div>
-        </div>
+            <div class="mb-3" data-aos="fade-right">
+                <span class="fs-3 fw-bold">Filter Aduan</span>
+            </div>
+            <div class="card border-0 shadow-0 rounded-4 mb-4 p-4">
+                <div class="d-flex justify-content-end">
+                    <a href="{{route('admin.index')}}" class="btn btnc-yellow"><i class="bi bi-arrow-repeat"></i> Refresh data</a>
+                </div>
+                <div class="d-flex gap-3 align-items-center justify-content-between">
+                    <!-- Filter Jenis Aduan -->
+                    <div class="form-group w-100 w-md-50">
+                        <label for="category_complaint" class="form-label fw-bold">Jenis Aduan</label>
+                        <select id="category_complaint" class="form-control bg-white">
+                            <option value="" disabled selected>Pilih Kategori Aduan</option>
+                            @foreach ($categoryComplaints as $category)
+                                <option value="{{ $category->category_complaint }}">{{ $category->category_complaint }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
 
+                    <!-- Filter Tanggal -->
+                    <div class="form-group w-100 w-md-50">
+                        <label for="created_at_filter" class="form-label fw-bold">Filter Tanggal</label>
+                        <input id="created_at_filter" class="form-control bg-white" type="text"
+                            placeholder="Pilih Tanggal">
+                    </div>
+                </div>
+            </div>
+        </div>
         @include('components.admin.table-history-all-complaint  ')
     @endsection
 
     @push('scripts')
         <script type="module">
+            $(document).ready(function() {
+                console.log('Select2 initialized');
+                $('#category_complaint').select2({
+                    placeholder: 'Pilih Kategori Aduan',
+                    allowClear: true,
+                    width: '100%',
+                    theme: 'bootstrap-5', // Gunakan tema Select2 Bootstrap 5
+                });
+            });
+
             $(document).on('change', '.status-select', function() {
                 var status = $(this).val();
                 var id = $(this).data('id');

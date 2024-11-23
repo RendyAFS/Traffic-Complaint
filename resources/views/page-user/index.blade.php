@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
-    <div class="container py-4">
+    <div class="px-1 m-1 py-1 px-md-5 m-md-5 fill-content">
         <div class="mb-4">
             <div class="mb-3" data-aos="fade-up">
                 <span class="fs-3 fw-bold">Input Data Aduan</span>
