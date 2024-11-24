@@ -98,12 +98,14 @@ class AdminController extends Controller
     public function formComplaint(Request $request)
     {
         try {
+            // Validasi input
             $request->validate([
                 'text-complaint' => 'required|string|max:255',
                 'lokasi' => 'required|string|max:255',
                 'gambar' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             ]);
 
+            // Proses gambar (jika ada)
             $filename = null;
             if ($request->hasFile('gambar')) {
                 $user = Auth::user();
@@ -124,11 +126,24 @@ class AdminController extends Controller
                 $file->storeAs('file-gambar', $filename, 'public');
             }
 
+            // Baca data dari file CSV
+            $situasiFile = public_path('dataset/situasi.csv'); // Path file situasi.csv
+            $tempatFile = public_path('dataset/tempat.csv');   // Path file tempat.csv
+            $vocabSituasi = $this->loadCsvSituasi($situasiFile);
+            $vocabTempat = $this->loadCsvTempat($tempatFile);
+
+            // Ekstrak kategori aduan
+            $textComplaint = $request->input('text-complaint');
+            $inputLokasi = $request->input('lokasi'); // Ambil lokasi dari input form
+            $categoryComplaint = $this->extractCategoryComplaint($textComplaint, $vocabSituasi, $vocabTempat, $inputLokasi);
+
+            // Simpan data aduan ke database
             Complaint::create([
                 'users_id' => Auth::id(),
-                'text_complaint' => $request->input('text-complaint'),
+                'text_complaint' => $textComplaint,
                 'type_complaint' => $this->getRandomComplaintType(),
-                'lokasi' => $request->input('lokasi'),
+                'category_complaint' => $categoryComplaint, // Tambahkan kategori aduan di sini
+                'lokasi' => $inputLokasi,
                 'status' => 'Aduan Masuk',
                 'gambar' => $filename,
             ]);
@@ -144,6 +159,75 @@ class AdminController extends Controller
         }
     }
 
+
+    // Fungsi untuk membaca file CSV (situasi)
+    private function loadCsvSituasi($filePath)
+    {
+        $situasi = [];
+        if (($handle = fopen($filePath, "r")) !== false) {
+            $header = fgetcsv($handle, 1000, ",");
+            while (($row = fgetcsv($handle, 1000, ",")) !== false) {
+                $situasi[] = array_filter([$row[0], $row[1], $row[2], $row[3], $row[4], $row[5]]);
+            }
+            fclose($handle);
+        }
+        return $situasi;
+    }
+
+    // Fungsi untuk membaca file CSV (tempat)
+    private function loadCsvTempat($filePath)
+    {
+        $tempat = [];
+        if (($handle = fopen($filePath, "r")) !== false) {
+            $header = fgetcsv($handle, 1000, ",");
+            while (($row = fgetcsv($handle, 1000, ",")) !== false) {
+                $tempat[$row[1]] = array_filter([$row[1], $row[2], $row[3], $row[4], $row[5], $row[6]]);
+            }
+            fclose($handle);
+        }
+        return $tempat;
+    }
+
+    // Fungsi untuk mengekstraksi kategori aduan
+    private function extractCategoryComplaint($text, $vocabSituasi, $vocabTempat, $inputLokasi)
+    {
+        $situasi = [];
+        $tempat = [];
+
+        // Cari situasi
+        foreach ($vocabSituasi as $group) {
+            foreach ($group as $word) {
+                if (stripos($text, $word) !== false) {
+                    $situasi[] = $group[0];
+                    break;
+                }
+            }
+        }
+
+        // Cari tempat
+        foreach ($vocabTempat as $key => $synonyms) {
+            foreach ($synonyms as $synonym) {
+                if (stripos($text, $synonym) !== false) {
+                    $tempat[] = $key;
+                    break;
+                }
+            }
+        }
+
+        // Jika lokasi dari teks kosong, gunakan lokasi dari input
+        if (empty($tempat)) {
+            $tempat[] = $inputLokasi;
+        }
+
+        // Gabungkan kategori
+        $situasiStr = implode(', ', $situasi);
+        $tempatStr = implode(', ', $tempat);
+
+        return $situasiStr . ($tempatStr ? ", " . $tempatStr : '');
+    }
+
+
+    // Fungsi untuk menentukan tipe aduan secara acak
     private function getRandomComplaintType()
     {
         $types = ['tidak urgent', 'kurang urgent', 'urgent', 'sangat urgent'];
