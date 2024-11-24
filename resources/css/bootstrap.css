@@ -77,6 +77,17 @@
     background-color: var(--dark-color);
     color: var(--white-color);
 }
+.btnc-yellow {
+    background-color: var(--yellow-color);
+    color: var(--dark-color);
+    border-radius: 0.7rem;
+    transition: 0.3s;
+}
+
+.btnc-yellow:hover {
+    background-color: var(--dark-color);
+    color: var(--white-color);
+}
 
 .btnc-red {
     background-color: var(--red-color);

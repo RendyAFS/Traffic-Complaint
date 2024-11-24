@@ -171,16 +171,17 @@ body {
     background: var(--secondary-color);
 }
 
-.filepond--root {
-    height: 180px;
-    border-radius: 10px;
+/* Umum untuk form control (tidak diubah) */
+.form-control {
+    font-size: 14px;
 }
 
-.text-justify {
-    text-align: justify;
-}
-
-.lottie-animation {
-    width: 5rem;
-    height: 5rem;
+/* Styling spesifik hanya untuk #category_complaint dan #created_at_filter */
+#category_complaint,
+#created_at_filter {
+    height: 38px; /* Tinggi seragam */
+    padding: 6px 12px; /* Padding seragam */
+    border: 1px solid #ced4da; /* Border konsisten */
+    border-radius: 5px; /* Radius sudut */
+    background-color: #fff; /* Warna latar putih untuk konsistensi */
 }

@@ -3,9 +3,10 @@
         <thead>
             <tr>
                 <th>No.</th>
-                <th class="w-50 align-middle">Aduan</th>
-                <th class="w-25 text-center align-middle">Gambar</th>
-                <th class="text-center align-middle">Tanggal & Waktu</th>
+                <th class="w-25 align-middle">Aduan</th>
+                <th class="w-25 align-middle">status</th>
+                <th class="w-25 align-middle">Gambar</th>
+                <th class="w-25 align-middle">Tanggal & Waktu</th>
             </tr>
         </thead>
     </table>
@@ -15,13 +16,24 @@
     $('#example').DataTable({
         processing: true,
         serverSide: true,
-        responsive: true,
+        responsive: {
+            details: {
+                display: DataTable.Responsive.display.modal({
+                    header: function(row) {
+                        var data = row.data();
+                        return 'Details Table';
+                    }
+                }),
+                renderer: DataTable.Responsive.renderer.tableAll({
+                    tableClass: 'table'
+                })
+            }
+        },
         ajax: '{{ route('getDataRiwayat') }}',
         columns: [{
                 data: 'no',
                 name: 'no',
-                className: 'text-center',
-                className: 'align-middle text-center'
+                className: 'align-middle'
             },
             {
                 data: 'text_complaint',
@@ -29,9 +41,24 @@
                 className: 'align-middle'
             },
             {
+                data: 'status',
+                name: 'status',
+                className: 'align-middle',
+                render: function(data, type, row) {
+                    // Menambahkan class berdasarkan status
+                    let statusClass =
+                        data === 'Aduan Selesai' ? 'badge bg-success' :
+                        data === 'Aduan Ditangani' ? 'badge bg-primary' :
+                        'badge bg-danger';
+
+                    // Mengembalikan badge sesuai status
+                    return '<span class="' + statusClass + '">' + data + '</span>';
+                }
+            },
+            {
                 data: 'gambar',
                 name: 'gambar',
-                className: 'text-center align-middle',
+                className: 'align-middle',
                 orderable: false,
                 searchable: false,
                 render: function(data, type, row) {

@@ -29,7 +29,7 @@
     <div id="app" class="warp-bg-login">
         @yield('content')
     </div>
-    @include('layouts.sessionAccess')
+    @include('layouts.session')
     @stack('scripts')
 
     {{-- Bootstrap --}}
@@ -38,9 +38,9 @@
     {{-- AOS --}}
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
 
+    <script>
+        AOS.init();
+    </script>
 </body>
-<script>
-    AOS.init();
-</script>
 
 </html>

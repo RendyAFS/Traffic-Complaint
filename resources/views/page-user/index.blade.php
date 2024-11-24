@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
-    <div class="container py-4">
+    <div class="px-1 m-1 py-1 px-md-5 m-md-5 fill-content">
         <div class="mb-4">
             <div class="mb-3" data-aos="fade-up">
                 <span class="fs-3 fw-bold">Input Data Aduan</span>
@@ -17,20 +17,25 @@
                             </div>
                             <div class="mb-3">
                                 <label for="lokasi" class="form-label fw-bold">Masukkan Lokasi</label>
-                                <input type="text" class="form-control" id="lokasi" name="lokasi" placeholder="Masukkan Lokasi" required>
+                                <input type="text" class="form-control" id="lokasi" name="lokasi"
+                                    placeholder="Masukkan Lokasi" required>
                             </div>
                         </div>
                         <div class="col-lg-6">
                             <div class="mb-3">
-                                <label for="gambar" class="form-label fw-bold">Masukkan Media <span class="text-grey fw-normal fst-italic">(png, jpg, jpeg)</span></label>
-                                <input type="file" id="fileGambar" name="gambar" required>
+                                <label for="gambar" class="form-label fw-bold">Masukkan Media <span
+                                        class="text-grey fw-normal fst-italic">(png, jpg, jpeg) max 2Mb</span></label><br>
+                                <input type="file" id="fileGambar" name="gambar" class="border w-100 p-3 rounded-2">
                             </div>
                         </div>
                     </div>
                     <div class="d-flex justify-content-center flex-row">
-                        <a href="{{ route('user.index') }}" class="btn btnc-red me-2"><i class="bi bi-x-circle-fill"></i> Reset</a>
-                        <button class="btn btnc-blue me-2" type="button" id="cek-lokasi"><i class="bi bi-geo-alt-fill"></i> Cek Lokasi</button>
-                        <button type="submit" class="btn btnc-green" id="submitButton"><i class="bi bi-floppy-fill"></i> Simpan</button>
+                        <a href="{{ route('user.index') }}" class="btn btnc-red me-2"><i class="bi bi-x-circle-fill"></i>
+                            Reset</a>
+                        <button class="btn btnc-blue me-2" type="button" id="cek-lokasi"><i class="bi bi-geo-alt-fill"></i>
+                            Lokasi</button>
+                        <button type="submit" class="btn btnc-green" id="submitButton"><i class="bi bi-floppy-fill"></i>
+                            Simpan</button>
                     </div>
                 </div>
             </form>
@@ -104,20 +109,30 @@
             // Menggunakan Nominatim API untuk reverse geocoding
             fetch(
                     `https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}&addressdetails=1`
-                    )
+                )
                 .then(response => response.json())
                 .then(data => {
                     let address = data.address;
                     let lokasiText =
                         `${address.road || ''}, ${address.suburb || ''}, ${address.city || address.town || address.village || ''}, ${address.state || ''}, ${address.postcode || ''}`;
                     document.getElementById("lokasi").value = lokasiText.trim();
-
-                    // Menutup Swal loading dan menampilkan pesan sukses
-                    Swal.fire("Berhasil", "Lokasi berhasil didapatkan!", "success");
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Berhasil',
+                        text: 'Lokasi berhasil didapatkan!',
+                        confirmButtonColor: '#9DBDFF',
+                        confirmButtonText: 'OK'
+                    });
                 })
                 .catch(error => {
                     console.error("Error fetching the location:", error);
-                    Swal.fire("Gagal", "Gagal mendapatkan lokasi, silakan coba lagi.", "error");
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Gagal',
+                        text: 'Gagal mendapatkan lokasi, silakan coba lagi.',
+                        confirmButtonColor: '#7a0000',
+                        confirmButtonText: 'OK'
+                    });
                 });
         }
 

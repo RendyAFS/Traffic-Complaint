@@ -11,7 +11,7 @@
             @foreach ($latestComplaints as $complaint)
             <div class="bg-light px-4 py-4 mb-3 rounded-4 shadow" data-aos="fade-up">
                 <div class="d-flex align-items-center mb-2">
-                    <i class="bi bi-send-plus-fill fs-2 icon-new-complaint me-3"></i>
+                    <i class="bi bi-send-arrow-down-fill fs-2 icon-new-complaint me-3"></i>
                     <span>{{$complaint->text_complaint}}</span>
 
                     <div class="ms-auto text-end">

@@ -12,6 +12,7 @@ class Complaint extends Model
         'users_id',
         'text_complaint',
         'type_complaint',
+        'category_complaint',
         'lokasi',
         'status',
         'gambar',
