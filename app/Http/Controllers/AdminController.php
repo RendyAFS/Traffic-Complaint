@@ -42,7 +42,7 @@ class AdminController extends Controller
         });
 
         // Ambil data category_complaint
-        $categoryComplaints = Complaint::select('category_complaint')->distinct()->take(5)->get();
+        $categoryComplaints = Complaint::select('category_complaint')->distinct()->get();
 
 
         // Hitung total semua aduan
