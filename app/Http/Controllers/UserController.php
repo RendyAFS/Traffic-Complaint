@@ -16,9 +16,10 @@ class UserController extends Controller
     }
     public function index()
     {
-        $title = 'User';
+        $title = Auth::user()->name; // Ambil nama dari Auth
         return view('page-user.index', compact('title'));
     }
+
     // Method untuk simpan aduan
     public function formComplaint(Request $request)
     {
