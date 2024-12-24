@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Imports\ComplaintsImport;
+use App\Models\SetValue;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Symfony\Component\Console\Completion\CompletionInput;
@@ -88,10 +89,6 @@ class AdminController extends Controller
         }
 
         return datatables()->of($query)
-            ->addColumn('no', function ($row) {
-                static $counter = 1;
-                return $counter++;
-            })
             ->make(true);
     }
 
@@ -249,12 +246,20 @@ class AdminController extends Controller
         $complaint->status = $request->status;
         $complaint->save();
 
-        // Perbarui semua aduan dengan category_status yang sama dalam rentang waktu 3 jam
-        if ($complaint->category_complaint && $complaint->created_at) { // Pastikan category_complaint dan created_at ada
+        // Perbarui semua aduan dengan kategori serupa dalam rentang waktu 3 jam
+        if ($complaint->category_complaint && $complaint->created_at) {
+            // Pastikan category_complaint dan created_at ada
             $startTime = $complaint->created_at->subHours(3); // Rentang 3 jam ke belakang
             $endTime = $complaint->created_at->addHours(3);  // Rentang 3 jam ke depan
 
-            Complaint::where('category_complaint', $complaint->category_complaint)
+            // Pisahkan kategori menjadi array untuk pencocokan fleksibel
+            $categories = array_map('trim', explode(',', $complaint->category_complaint));
+
+            Complaint::where(function ($query) use ($categories) {
+                foreach ($categories as $category) {
+                    $query->orWhere('category_complaint', 'LIKE', "%$category%");
+                }
+            })
                 ->where('id', '!=', $complaint->id) // Hindari memperbarui data yang sama
                 ->whereBetween('created_at', [$startTime, $endTime]) // Filter rentang waktu 3 jam
                 ->update(['status' => $request->status]);
@@ -318,10 +323,6 @@ class AdminController extends Controller
 
 
         return datatables()->of($query)
-            ->addColumn('no', function ($row) {
-                static $counter = 1;
-                return $counter++;
-            })
             ->addColumn('status', function ($row) {
                 // Mengembalikan status mentah untuk di-render di frontend
                 return $row->status;
@@ -362,10 +363,6 @@ class AdminController extends Controller
 
 
         return datatables()->of($query)
-            ->addColumn('no', function ($row) {
-                static $counter = 1;
-                return $counter++;
-            })
             ->addColumn('status', function ($row) {
                 // Mengembalikan status mentah untuk di-render di frontend
                 return $row->status;
@@ -407,10 +404,6 @@ class AdminController extends Controller
 
 
         return datatables()->of($query)
-            ->addColumn('no', function ($row) {
-                static $counter = 1;
-                return $counter++;
-            })
             ->addColumn('status', function ($row) {
                 // Mengembalikan status mentah untuk di-render di frontend
                 return $row->status;
@@ -424,5 +417,122 @@ class AdminController extends Controller
                 return $row->created_at;
             })
             ->make(true);
+    }
+
+    // Menampilkan data berdasarkan konteks
+    public function getSetValues(Request $request)
+    {
+        $konteks = $request->input('konteks');
+        $data = SetValue::where('konteks', $konteks)->first();
+
+        return response()->json($data);
+    }
+
+    // Mengupdate data value
+    public function newSetValue(Request $request)
+    {
+        // Log data request untuk memastikan kita menerima data yang benar
+        Log::info('Received data:', $request->all());
+
+        // Validasi data yang diterima
+        $validated = $request->validate([
+            'konteks' => 'required|string',  // Pastikan konteks adalah string
+            'value' => 'required|json',      // Pastikan value adalah JSON
+        ]);
+
+        // Mendapatkan konteks dan meng-decode value JSON yang diterima
+        $konteks = $validated['konteks'];
+        $newData = json_decode($validated['value'], true);
+
+        // Log data setelah decode
+        Log::info('Decoded value:', $newData);
+
+        // Mencari data berdasarkan konteks
+        $setValue = SetValue::where('konteks', $konteks)->first();
+
+        if ($setValue) {
+            // Menambahkan data baru ke value yang sudah ada
+            $currentValue = json_decode($setValue->value, true);
+
+            // Gabungkan data baru ke dalam data lama
+            $currentValue = array_merge($currentValue, $newData);
+
+            // Simpan data yang sudah digabung
+            $setValue->value = json_encode($currentValue);
+            $setValue->save();
+
+            return response()->json(['message' => 'Data updated successfully!']);
+        } else {
+            // Jika data belum ada, buat data baru
+            SetValue::create([
+                'konteks' => $konteks,
+                'value' => json_encode($newData),
+            ]);
+            return response()->json(['message' => 'Data added successfully!']);
+        }
+    }
+
+    public function updateSetValue(Request $request)
+    {
+        $validated = $request->validate([
+            'konteks' => 'required|string',
+            'key' => 'required|string', // Original key
+            'new_key' => 'required|string', // New key
+            'new_value' => 'required|string', // New value
+        ]);
+
+        $setValue = SetValue::where('konteks', $validated['konteks'])->first();
+
+        if ($setValue) {
+            $currentValue = json_decode($setValue->value, true);
+
+            // Check if old key exists, then update it
+            if (isset($currentValue[$validated['key']])) {
+                // Remove the old key and add the new one
+                $value = $currentValue[$validated['key']];
+                unset($currentValue[$validated['key']]);
+                $currentValue[$validated['new_key']] = $value;
+
+                // Update the value with the new key
+                $setValue->value = json_encode($currentValue);
+                $setValue->save();
+
+                return response()->json(['message' => 'Data updated successfully!']);
+            } else {
+                return response()->json(['message' => 'Key not found!'], 404);
+            }
+        } else {
+            return response()->json(['message' => 'Data not found!'], 404);
+        }
+    }
+
+
+
+    // Menghapus data
+    public function deleteSetValue(Request $request)
+    {
+        $validated = $request->validate([
+            'konteks' => 'required|string',
+            'key' => 'required|string',  // Key to be deleted
+        ]);
+
+        $setValue = SetValue::where('konteks', $validated['konteks'])->first();
+
+        if ($setValue) {
+            $currentValue = json_decode($setValue->value, true);
+
+            // Remove specific key
+            if (isset($currentValue[$validated['key']])) {
+                unset($currentValue[$validated['key']]);
+                $setValue->value = json_encode($currentValue);
+                $setValue->save();
+
+                return response()->json(['message' => 'Key deleted successfully!']);
+            } else {
+                return response()->json(['message' => 'Key not found!'], 404);
+            }
+        } else {
+            return response()->json(['message' => 'Data not found!'], 404);
+        }
     }
 }

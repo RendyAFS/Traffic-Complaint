@@ -3,8 +3,17 @@
         <a class="navbar-brand font-white fw-bold mb-3 mb-md-0" href="{{ url('/') }}">
             Traffic Urgency
         </a>
-        <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
-            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="{{ __('Toggle navigation') }}">
+
+        <div class="d-flex align-items-center">
+            @if (Request::routeIs('indexLandingPage'))
+                <a class="nav-link px-3 font-primary fw-bold" href="#content-2">Total Laporan</a>
+                <a class="nav-link px-3 font-primary fw-bold" href="#content-3">Aduan Terbaru</a>
+            @endif
+        </div>
+
+        <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse"
+            data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false"
+            aria-label="{{ __('Toggle navigation') }}">
             <i class="bi bi-grid-fill fs-2"></i>
         </button>
 
@@ -17,19 +26,23 @@
                         @if (!Request::is('/'))
                             <li class="nav-item">
                                 <a class="nav-link {{ Route::is('admin.index') ? 'fw-bold font-primary nav-active' : '' }}"
-                                    aria-current="page" href="{{ route('admin.index') }}"><i class="bi bi-house-fill"></i> Dashboard</a>
+                                    aria-current="page" href="{{ route('admin.index') }}"><i class="bi bi-house-fill"></i>
+                                    Dashboard</a>
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link {{ Route::is('admin.new.complaint') ? 'fw-bold font-primary nav-active' : '' }}"
-                                    aria-current="page" href="{{ route('admin.new.complaint') }}"><i class="bi bi-send-arrow-down-fill"></i> Aduan Masuk</a>
+                                    aria-current="page" href="{{ route('admin.new.complaint') }}"><i
+                                        class="bi bi-send-arrow-down-fill"></i> Aduan Masuk</a>
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link {{ Route::is('admin.process.complaint') ? 'fw-bold font-primary nav-active' : '' }}"
-                                    aria-current="page" href="{{ route('admin.process.complaint') }}"><i class="bi bi-send-exclamation-fill"></i> Aduan Ditangani</a>
+                                    aria-current="page" href="{{ route('admin.process.complaint') }}"><i
+                                        class="bi bi-send-exclamation-fill"></i> Aduan Ditangani</a>
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link {{ Route::is('admin.done.complaint') ? 'fw-bold font-primary nav-active' : '' }}"
-                                    aria-current="page" href="{{ route('admin.done.complaint') }}"><i class="bi bi-send-check-fill"></i> Aduan Selesai</a>
+                                    aria-current="page" href="{{ route('admin.done.complaint') }}"><i
+                                        class="bi bi-send-check-fill"></i> Aduan Selesai</a>
                             </li>
                         @endif
                     @endif
@@ -58,19 +71,23 @@
                             <!-- Tampilkan menu untuk Admin -->
                             <li class="nav-item mb-3 mb-md-0">
                                 <a class="nav-link me-1 {{ Route::is('admin.index') ? 'fw-bold font-primary nav-active' : '' }}"
-                                    aria-current="page" href="{{ route('admin.index') }}"><i class="bi bi-house-fill"></i> Dashboard</a>
+                                    aria-current="page" href="{{ route('admin.index') }}"><i class="bi bi-house-fill"></i>
+                                    Dashboard</a>
                             </li>
                             <li class="nav-item mb-3 mb-md-0">
                                 <a class="nav-link me-1 {{ Route::is('admin.new.complaint') ? 'fw-bold font-primary nav-active' : '' }}"
-                                    aria-current="page" href="{{ route('admin.new.complaint') }}"><i class="bi bi-send-arrow-down-fill"></i> Aduan Masuk</a>
+                                    aria-current="page" href="{{ route('admin.new.complaint') }}"><i
+                                        class="bi bi-send-arrow-down-fill"></i> Aduan Masuk</a>
                             </li>
                             <li class="nav-item mb-3 mb-md-0">
                                 <a class="nav-link me-1 {{ Route::is('admin.process.complaint') ? 'fw-bold font-primary nav-active' : '' }}"
-                                    aria-current="page" href="{{ route('admin.process.complaint') }}"><i class="bi bi-send-exclamation-fill"></i> Aduan Ditangani</a>
+                                    aria-current="page" href="{{ route('admin.process.complaint') }}"><i
+                                        class="bi bi-send-exclamation-fill"></i> Aduan Ditangani</a>
                             </li>
                             <li class="nav-item mb-3 mb-md-0">
                                 <a class="nav-link me-1 {{ Route::is('admin.done.complaint') ? 'fw-bold font-primary nav-active' : '' }}"
-                                    aria-current="page" href="{{ route('admin.done.complaint') }}"><i class="bi bi-send-check-fill"></i> Aduan Selesai</a>
+                                    aria-current="page" href="{{ route('admin.done.complaint') }}"><i
+                                        class="bi bi-send-check-fill"></i> Aduan Selesai</a>
                             </li>
                         @else
                             <li class="nav-item mb-3 mb-md-0">

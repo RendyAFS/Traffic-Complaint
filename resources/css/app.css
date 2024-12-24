@@ -7,9 +7,9 @@
     --white-soft-color: #EBF2FF;
     --bg-loading-color: rgb(255, 255, 255, 0.9);
     --dark-color: #1a1a1a;
-    --green-color: #005e43;
-    --blue-color: #00467a;
-    --red-color: #7a0000;
+    --red-color: #db5858;
+    --green-color: #58db63;
+    --blue-color: #5870db;
     --font-blue: #0B2F9F;
     --yellow-color: #FFCE20;
     --background-color: linear-gradient(to right, #0D2454, #0842B9, #9DBDFF);
@@ -18,6 +18,11 @@
 
 body {
     background: var(--body-color);
+}
+
+th {
+    background-color: var(--grey-color) !important;
+    color: var(--white-color) !important;
 }
 
 .warp-container {
@@ -131,25 +136,28 @@ body {
     margin-bottom: 3rem;
 }
 
-.footer{
+.footer {
     background: var(--primary-color);
 }
 
-.link-footer-1{
+.link-footer-1 {
     text-decoration: none;
     color: var(--white-color);
     list-style: none;
     font-weight: bold;
 }
+
 .link-footer-1 li {
     margin-bottom: 2rem;
 }
-.link-footer-2{
+
+.link-footer-2 {
     text-decoration: none;
     color: var(--white-color);
     list-style: none;
     font-weight: bold;
 }
+
 .link-footer-2 li {
     margin-bottom: 1rem;
 }
@@ -160,14 +168,16 @@ body {
         align-items: center;
     }
 
-    .footer-1, .footer-2, .footer-3 {
+    .footer-1,
+    .footer-2,
+    .footer-3 {
         margin-bottom: 2rem;
         text-align: center;
     }
 }
 
 
-.end-footer{
+.end-footer {
     background: var(--secondary-color);
 }
 
@@ -179,9 +189,36 @@ body {
 /* Styling spesifik hanya untuk #category_complaint dan #created_at_filter */
 #category_complaint,
 #created_at_filter {
-    height: 38px; /* Tinggi seragam */
-    padding: 6px 12px; /* Padding seragam */
-    border: 1px solid #ced4da; /* Border konsisten */
-    border-radius: 5px; /* Radius sudut */
-    background-color: #fff; /* Warna latar putih untuk konsistensi */
+    height: 38px;
+    /* Tinggi seragam */
+    padding: 6px 12px;
+    /* Padding seragam */
+    border: 1px solid #ced4da;
+    /* Border konsisten */
+    border-radius: 5px;
+    /* Radius sudut */
+    background-color: #fff;
+    /* Warna latar putih untuk konsistensi */
+}
+
+/* Warna dan font tab default */
+.nav-tabs .nav-link {
+    color: #6c757d;
+    font-weight: 400;
+    background-color: var(--white-color);
+    border: 1px solid transparent;
+    transition: 0.3s;
+}
+
+/* Tab aktif */
+.nav-tabs .nav-link.active {
+    color: var(--white-color);
+    font-weight: 600;
+    background-color:var(--grey-color);
+}
+
+/* Hover efek pada tab */
+.nav-tabs .nav-link:hover {
+    color: var(--white-color);
+    background-color: var(--grey-color);
 }

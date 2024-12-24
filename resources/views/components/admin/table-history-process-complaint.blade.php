@@ -2,12 +2,11 @@
     <table id="example" class="table table-hover" style="width:100%">
         <thead>
             <tr>
-                <th>No.</th>
                 <th class="align-middle">Nama</th>
                 <th class="align-middle">Lokasi</th>
                 <th class="align-middle">Aduan</th>
                 <th class="align-middle text-center">Jenis Aduan</th>
-                <th class="align-middle text-center">Skala Prioritas</th>
+                <th class="align-middle text-center">Nilai Urgensi</th>
                 <th class="align-middle text-center">Status</th>
                 <th class="text-cente align-middle">Gambar</th>
                 <th class="align-middle">Tanggal & Waktu</th>
@@ -72,12 +71,6 @@
         },
         ajax: '{{ route('getDataProcessComplaint') }}',
         columns: [{
-                data: 'no',
-                name: 'no',
-                orderable: false,
-                className: ' align-middle'
-            },
-            {
                 data: 'user.name',
                 name: 'user.name',
                 orderable: false,
@@ -124,9 +117,9 @@
                 data: 'type_complaint',
                 name: 'type_complaint',
                 orderable: false,
-                className: 'align-middle ',
+                className: 'align-middle text-center',
                 render: function(data, type, row) {
-                    // Logika untuk menentukan skala prioritas
+                    // Logika untuk menentukan Nilai Urgensi
                     switch (data) {
                         case 'tidak urgent':
                             return 4;

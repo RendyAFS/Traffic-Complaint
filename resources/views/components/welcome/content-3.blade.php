@@ -1,4 +1,4 @@
-<div class="content mb-5">
+<div class="content mb-5" id="content-3" style="scroll-margin-top: 100px;">
     <div class="text-center mb-5" data-aos="fade-up">
         <span class="fw-bold fs-3 font-blue mb-4">Aduan Terbaru</span>
     </div>

@@ -33,7 +33,7 @@
         columns: [{
                 data: 'no',
                 name: 'no',
-                className: 'align-middle'
+                className: 'align-middle text-start'
             },
             {
                 data: 'text_complaint',

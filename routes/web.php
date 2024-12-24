@@ -46,6 +46,11 @@ Route::middleware(['auth', 'checklevel:Admin'])->group(function () {
 
     Route::get('/admin/done-complaint', [AdminController::class, 'indexDoneComplaint'])->name('admin.done.complaint');
     Route::get('/admin/done-complaints/data', [AdminController::class, 'getDataDoneComplaint'])->name('getDataDoneComplaint');
+
+    Route::get('/set-values', [AdminController::class, 'getSetValues']);
+    Route::post('/set-values/new', [AdminController::class, 'newSetValue']);
+    Route::post('/set-values/update', [AdminController::class, 'updateSetValue']);
+    Route::post('/set-values/delete', [AdminController::class, 'deleteSetValue']);
 });
 
 // Route untuk User
