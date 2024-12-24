@@ -13,8 +13,12 @@
     --font-blue: #0B2F9F;
     --yellow-color: #FFCE20;
     --background-color: linear-gradient(to right, #0D2454, #0842B9, #9DBDFF);
+    --body-color: #eeeeee;
 }
 
+.bgc-red{
+    background-color: var(--red-color);
+}
 
 .font-primary {
     color: var(--primary-color);

@@ -64,6 +64,11 @@
 
     <div class="pb-5">
         @yield('content')
+        @auth
+            @if (auth()->user()->level == 'Admin')
+                @include('components.admin.set-value')
+            @endif
+        @endauth
     </div>
 
     @include('layouts.footer')
@@ -92,7 +97,9 @@
 
     <script>
         // AOS Init
-        AOS.init();
+        AOS.init({
+            once: true
+        });
     </script>
 
 </body>

@@ -41,7 +41,7 @@ class ComplaintSeeder extends Seeder
         $data = [];
         $now = Carbon::now();
 
-        for ($i = 1; $i <= 20; $i++) {
+        for ($i = 1; $i <= 6; $i++) {
             $text_complaint = $text_complaints[array_rand($text_complaints)];
 
             // Extract location from text_complaint
@@ -60,7 +60,7 @@ class ComplaintSeeder extends Seeder
             $updated_at = $created_at->copy()->addDays(rand(1, 3));
 
             $data[] = [
-                'users_id' => rand(1, 10),
+                'users_id' => rand(1, 3),
                 'text_complaint' => $text_complaint,
                 'type_complaint' => $type_complaints[array_rand($type_complaints)],
                 'category_complaint' => $category_complaint,

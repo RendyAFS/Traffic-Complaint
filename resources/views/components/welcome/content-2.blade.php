@@ -1,4 +1,4 @@
-<div class="content mb-5">
+<div class="content mb-5" id="content-2" style="scroll-margin-top: 100px;">
     <div class="card shadow rounded-4 border-0 p-4" data-aos="zoom-in">
         <span class="text-center fw-bold fs-3 font-blue mb-4">Semua Laporan</span>
         <div class="row text-center">
