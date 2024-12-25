@@ -10,7 +10,7 @@
     aria-labelledby="staticModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
         <div class="modal-content">
-            <div class="modal-header bgc-red d-flex justify-content-between">
+            <div class="modal-header bgc-red d-flex justify-content-between flex-row">
                 <h5 class="modal-title font-white" id="staticModalLabel">Set Value Konteks</h5>
                 <button type="button" class="btn btn-transparant text-white border-0" data-bs-dismiss="modal"
                     aria-label="Close">
@@ -324,16 +324,17 @@
 
                     if (parsedValue && typeof parsedValue === 'object' && !Array.isArray(parsedValue)) {
                         content += `
-                <table class="table ">
+                <table id="data-table-${konteks}" class="table">
                     <thead>
                         <tr>
-                            <th style="width: 37.5%;">Key</th>  <!-- 75% divided into 2 columns for Key & Value -->
-                            <th style="width: 37.5%;">Value</th> <!-- 75% divided into 2 columns for Key & Value -->
+                            <th style="width: 37.5%;">Key</th>
+                            <th style="width: 37.5%;">Value</th>
                             <th style="width: 25%;">Actions</th>
                         </tr>
                     </thead>
                     <tbody>
                 `;
+
                         $.each(parsedValue, function(key, val) {
                             content += `
                     <tr data-konteks="${data.konteks}" data-key="${key}">
@@ -351,21 +352,48 @@
                                 <button class="btn btn-danger delete-btn"><i class="bi bi-trash"></i></button>
                                 <button class="btn btn-success update-btn" style="display:none;"><i class="bi bi-check2"></i></button>
                                 <button class="btn btn-danger cancel-btn" style="display:none;"><i class="bi bi-x"></i></button>
-                            <div
+                            </div>
                         </td>
                     </tr>
                     `;
                         });
+
                         content += `</tbody></table>`;
+
+                        // Tempatkan konten tabel ke dalam elemen
+                        $(`#${konteks.toLowerCase()}-table`).html(content);
+
+                        // Hancurkan DataTable jika sudah ada
+                        if ($.fn.dataTable.isDataTable(`#data-table-${konteks}`)) {
+                            $(`#data-table-${konteks}`).DataTable()
+                        .destroy(); // Hancurkan DataTable yang ada
+                        }
+
+                        // Inisialisasi DataTable setelah data dimuat
+                        $(`#data-table-${konteks}`).DataTable({
+                            "pageLength": 10,
+                            "lengthChange": false,
+                            "info": true,
+                            "searching": true
+                        });
+
+                        // Menambahkan event listeners untuk tombol aksi setelah tabel diinisialisasi
+                        addActionEventListeners(konteks);
                     } else {
                         content = `<p>No data available</p>`;
                     }
                 } else {
                     content = `<p>No data available</p>`;
                 }
-                $(`#${konteks.toLowerCase()}-table`).html(content);
             });
         }
+
+        $('#myTab a').on('shown.bs.tab', function(e) {
+            var konteks = $(e.target).attr('href').substring(1); // Ambil id tab yang baru
+            loadData(konteks); // Panggil fungsi loadData untuk memuat data pada tab yang baru
+        });
+
+
 
         // Edit button click handler
         $(document).on('click', '.edit-btn', function() {

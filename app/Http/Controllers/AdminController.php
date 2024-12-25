@@ -428,6 +428,7 @@ class AdminController extends Controller
         return response()->json($data);
     }
 
+
     // Mengupdate data value
     public function newSetValue(Request $request)
     {
