@@ -10,7 +10,7 @@
     aria-labelledby="staticModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
         <div class="modal-content">
-            <div class="modal-header bgc-red d-flex justify-content-between">
+            <div class="modal-header bgc-red d-flex justify-content-between flex-row">
                 <h5 class="modal-title font-white" id="staticModalLabel">Set Value Konteks</h5>
                 <button type="button" class="btn btn-transparant text-white border-0" data-bs-dismiss="modal"
                     aria-label="Close">
@@ -161,8 +161,7 @@
         // Fungsi untuk menutup form input
         function closeInputForm(konteks) {
             $('#new-value-form').remove(); // Menghapus form input
-            // Ubah icon kembali ke plus
-            $(`#add-${konteks.toLowerCase()} i`).removeClass('bi-x-lg').addClass('bi-plus-circle');
+            // Tidak ada perubahan pada icon karena tetap bi-plus-circle
         }
 
         // Menangani klik tombol "Add" untuk setiap tab
@@ -172,8 +171,7 @@
                 closeInputForm(konteks); // Menutup form jika sudah terbuka
             } else {
                 showInputForm(konteks); // Menampilkan form input
-                $(`#add-${konteks.toLowerCase()} i`).removeClass('bi-plus-circle').addClass(
-                    'bi-x-lg'); // Ganti icon
+                // Tidak ada perubahan icon
             }
         });
 
@@ -183,7 +181,7 @@
                 closeInputForm(konteks);
             } else {
                 showInputForm(konteks);
-                $(`#add-${konteks.toLowerCase()} i`).removeClass('bi-plus-circle').addClass('bi-x-lg');
+                // Tidak ada perubahan icon
             }
         });
 
@@ -193,7 +191,7 @@
                 closeInputForm(konteks);
             } else {
                 showInputForm(konteks);
-                $(`#add-${konteks.toLowerCase()} i`).removeClass('bi-plus-circle').addClass('bi-x-lg');
+                // Tidak ada perubahan icon
             }
         });
 
@@ -203,7 +201,7 @@
                 closeInputForm(konteks);
             } else {
                 showInputForm(konteks);
-                $(`#add-${konteks.toLowerCase()} i`).removeClass('bi-plus-circle').addClass('bi-x-lg');
+                // Tidak ada perubahan icon
             }
         });
 
@@ -213,9 +211,10 @@
                 closeInputForm(konteks);
             } else {
                 showInputForm(konteks);
-                $(`#add-${konteks.toLowerCase()} i`).removeClass('bi-plus-circle').addClass('bi-x-lg');
+                // Tidak ada perubahan icon
             }
         });
+
 
         // Menambahkan CSRF token ke setiap request AJAX
         $.ajaxSetup({
@@ -251,17 +250,29 @@
                                 'content') // Pastikan CSRF token ada
                         },
                         success: function(response) {
-                            Swal.fire({
-                                icon: 'success',
-                                title: 'Success',
-                                text: response.message,
-                                showConfirmButton: false, // Hides the confirm button
-                                timer: 2000 // Automatically closes after 2 seconds
-                            });
+                            if (response.exists) {
+                                // Jika key sudah ada, tampilkan Swal.fire dengan error
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'Error',
+                                    text: 'The key already exists.',
+                                    showConfirmButton: false,
+                                    timer: 2000 // 2 seconds
+                                });
+                            } else {
+                                // Jika berhasil disimpan, tampilkan Swal.fire dengan success
+                                Swal.fire({
+                                    icon: 'success',
+                                    title: 'Success',
+                                    text: response.message,
+                                    showConfirmButton: false, // Hides the confirm button
+                                    timer: 2000 // Automatically closes after 2 seconds
+                                });
 
-                            $('#new-value-form')
-                                .remove(); // Menghapus form setelah data disimpan
-                            loadData(konteks); // Reload data tab setelah penambahan
+                                $('#new-value-form')
+                                    .remove(); // Menghapus form setelah data disimpan
+                                loadData(konteks); // Reload data tab setelah penambahan
+                            }
                         },
                         error: function(xhr, status, error) {
                             console.error('Error:', error);
@@ -269,7 +280,7 @@
                                 icon: 'error',
                                 title: 'Error',
                                 text: 'An error occurred while saving data.',
-                                showConfirmButton: false, // Hides the confirm button
+                                showConfirmButton: false,
                                 timer: 2000 // Automatically closes after 2 seconds
                             });
                         }
@@ -313,16 +324,17 @@
 
                     if (parsedValue && typeof parsedValue === 'object' && !Array.isArray(parsedValue)) {
                         content += `
-                <table class="table ">
+                <table id="data-table-${konteks}" class="table">
                     <thead>
                         <tr>
-                            <th style="width: 37.5%;">Key</th>  <!-- 75% divided into 2 columns for Key & Value -->
-                            <th style="width: 37.5%;">Value</th> <!-- 75% divided into 2 columns for Key & Value -->
+                            <th style="width: 37.5%;">Key</th>
+                            <th style="width: 37.5%;">Value</th>
                             <th style="width: 25%;">Actions</th>
                         </tr>
                     </thead>
                     <tbody>
                 `;
+
                         $.each(parsedValue, function(key, val) {
                             content += `
                     <tr data-konteks="${data.konteks}" data-key="${key}">
@@ -338,23 +350,50 @@
                             <div class="d-flex flex-row gap-2 flex-wrap">
                                 <button class="btn btn-warning edit-btn"><i class="bi bi-pencil-square"></i></button>
                                 <button class="btn btn-danger delete-btn"><i class="bi bi-trash"></i></button>
-                                <button class="btn btn-success save-btn" style="display:none;"><i class="bi bi-check2"></i></button>
+                                <button class="btn btn-success update-btn" style="display:none;"><i class="bi bi-check2"></i></button>
                                 <button class="btn btn-danger cancel-btn" style="display:none;"><i class="bi bi-x"></i></button>
-                            <div
+                            </div>
                         </td>
                     </tr>
                     `;
                         });
+
                         content += `</tbody></table>`;
+
+                        // Tempatkan konten tabel ke dalam elemen
+                        $(`#${konteks.toLowerCase()}-table`).html(content);
+
+                        // Hancurkan DataTable jika sudah ada
+                        if ($.fn.dataTable.isDataTable(`#data-table-${konteks}`)) {
+                            $(`#data-table-${konteks}`).DataTable()
+                        .destroy(); // Hancurkan DataTable yang ada
+                        }
+
+                        // Inisialisasi DataTable setelah data dimuat
+                        $(`#data-table-${konteks}`).DataTable({
+                            "pageLength": 10,
+                            "lengthChange": false,
+                            "info": true,
+                            "searching": true
+                        });
+
+                        // Menambahkan event listeners untuk tombol aksi setelah tabel diinisialisasi
+                        addActionEventListeners(konteks);
                     } else {
                         content = `<p>No data available</p>`;
                     }
                 } else {
                     content = `<p>No data available</p>`;
                 }
-                $(`#${konteks.toLowerCase()}-table`).html(content);
             });
         }
+
+        $('#myTab a').on('shown.bs.tab', function(e) {
+            var konteks = $(e.target).attr('href').substring(1); // Ambil id tab yang baru
+            loadData(konteks); // Panggil fungsi loadData untuk memuat data pada tab yang baru
+        });
+
+
 
         // Edit button click handler
         $(document).on('click', '.edit-btn', function() {
@@ -363,7 +402,7 @@
             let valueDisplayKey = parentRow.find('.key-display');
             let inputFieldValue = parentRow.find('.value-input');
             let valueDisplayValue = parentRow.find('.value-display');
-            let saveButton = parentRow.find('.save-btn');
+            let saveButton = parentRow.find('.update-btn');
             let cancelButton = parentRow.find('.cancel-btn');
 
             // Hide the display values and show input fields
@@ -384,7 +423,7 @@
             let valueDisplayKey = parentRow.find('.key-display');
             let inputFieldValue = parentRow.find('.value-input');
             let valueDisplayValue = parentRow.find('.value-display');
-            let saveButton = parentRow.find('.save-btn');
+            let saveButton = parentRow.find('.update-btn');
             let editButton = parentRow.find('.edit-btn');
             let deleteButton = parentRow.find('.delete-btn');
             let cancelButton = parentRow.find('.cancel-btn');
@@ -400,8 +439,8 @@
             deleteButton.show(); // Show the delete button again
         });
 
-        // Save button click handler
-        $(document).on('click', '.save-btn', function() {
+        // Save button click handler (Edit)
+        $(document).on('click', '.update-btn', function() {
             let parentRow = $(this).closest('tr');
             let oldKey = parentRow.data('key');
             let newKey = parentRow.find('.key-input').val();
@@ -409,34 +448,86 @@
             let konteks = parentRow.data('konteks');
 
             if (newKey !== '' && newValue !== '') {
-                // Send updated key and value to server
+                // Send updated key and value to the server
                 $.post('/set-values/update', {
                     konteks: konteks,
                     key: oldKey, // Send the old key to identify the key to update
                     new_key: newKey, // Send the new key
                     new_value: newValue
                 }, function(response) {
-                    alert(response.message);
-                    loadData(konteks); // Reload data after update
+                    if (response.message === 'The new key already exists!') {
+                        // Show Swal.fire alert if new key already exists
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: 'The new key already exists!',
+                            showConfirmButton: false,
+                            timer: 2000 // 2 seconds
+                        });
+                    } else {
+                        // Use Swal.fire for success alert with no confirmation
+                        Swal.fire({
+                            icon: 'success',
+                            title: response.message,
+                            showConfirmButton: false,
+                            timer: 2000 // 2 seconds
+                        });
+
+                        loadData(konteks); // Reload data after update
+                    }
+                }).fail(function(xhr, status, error) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: 'An error occurred while updating data.',
+                        showConfirmButton: false,
+                        timer: 2000 // 2 seconds
+                    });
                 });
             } else {
-                alert('Key and value cannot be empty');
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'Key and value cannot be empty',
+                    showConfirmButton: false,
+                    timer: 2000 // 2 seconds
+                });
             }
         });
 
 
-        // Delete button click handler
+        // Delete button click handler (Delete with confirmation)
         $(document).on('click', '.delete-btn', function() {
             let parentRow = $(this).closest('tr');
             let key = parentRow.data('key');
             let konteks = parentRow.data('konteks');
 
-            $.post('/set-values/delete', {
-                konteks: konteks,
-                key: key
-            }, function(response) {
-                alert(response.message);
-                loadData(konteks); // Reload data after deletion
+            // Confirm deletion using Swal
+            Swal.fire({
+                title: 'Are you sure?',
+                text: "You won't be able to undo this action!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Yes, delete it!',
+                confirmButtonColor: "#58db63", // Correct property name
+                cancelButtonText: 'No, keep it',
+                cancelButtonColor: "#db5858" // Corrected property name
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // Proceed with deletion if confirmed
+                    $.post('/set-values/delete', {
+                        konteks: konteks,
+                        key: key
+                    }, function(response) {
+                        Swal.fire({
+                            icon: 'success',
+                            title: response.message,
+                            showConfirmButton: false,
+                            timer: 2000 // 2 seconds
+                        });
+                        loadData(konteks); // Reload data after deletion
+                    });
+                }
             });
         });
     });

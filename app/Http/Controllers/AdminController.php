@@ -428,6 +428,7 @@ class AdminController extends Controller
         return response()->json($data);
     }
 
+
     // Mengupdate data value
     public function newSetValue(Request $request)
     {
@@ -450,9 +451,17 @@ class AdminController extends Controller
         // Mencari data berdasarkan konteks
         $setValue = SetValue::where('konteks', $konteks)->first();
 
+        // Periksa apakah key yang sama sudah ada dalam data
         if ($setValue) {
-            // Menambahkan data baru ke value yang sudah ada
             $currentValue = json_decode($setValue->value, true);
+
+            // Cek apakah key sudah ada dalam data yang sudah ada
+            foreach ($newData as $key => $value) {
+                if (isset($currentValue[$key])) {
+                    // Jika key sudah ada, kirimkan response untuk memberi tahu bahwa key sudah ada
+                    return response()->json(['exists' => true, 'message' => 'The key already exists.'], 400);
+                }
+            }
 
             // Gabungkan data baru ke dalam data lama
             $currentValue = array_merge($currentValue, $newData);
@@ -461,16 +470,17 @@ class AdminController extends Controller
             $setValue->value = json_encode($currentValue);
             $setValue->save();
 
-            return response()->json(['message' => 'Data updated successfully!']);
+            return response()->json(['exists' => false, 'message' => 'Data added successfully!']);
         } else {
             // Jika data belum ada, buat data baru
             SetValue::create([
                 'konteks' => $konteks,
                 'value' => json_encode($newData),
             ]);
-            return response()->json(['message' => 'Data added successfully!']);
+            return response()->json(['exists' => false, 'message' => 'Data added successfully!']);
         }
     }
+
 
     public function updateSetValue(Request $request)
     {
@@ -486,14 +496,18 @@ class AdminController extends Controller
         if ($setValue) {
             $currentValue = json_decode($setValue->value, true);
 
+            // If the new key is different from the old key, check if the new key already exists
+            if ($validated['new_key'] !== $validated['key'] && isset($currentValue[$validated['new_key']])) {
+                return response()->json(['message' => 'The new key already exists!'], 400); // Conflict error
+            }
+
             // Check if old key exists, then update it
             if (isset($currentValue[$validated['key']])) {
-                // Remove the old key and add the new one
-                $value = $currentValue[$validated['key']];
+                // Remove old key and add the new key with the new value
                 unset($currentValue[$validated['key']]);
-                $currentValue[$validated['new_key']] = $value;
+                $currentValue[$validated['new_key']] = $validated['new_value'];
 
-                // Update the value with the new key
+                // Update the value with the new key and value
                 $setValue->value = json_encode($currentValue);
                 $setValue->save();
 
@@ -505,7 +519,6 @@ class AdminController extends Controller
             return response()->json(['message' => 'Data not found!'], 404);
         }
     }
-
 
 
     // Menghapus data
