@@ -23,27 +23,16 @@ class UserController extends Controller
     // Method untuk simpan aduan
     public function formComplaint(Request $request)
     {
-        // Validasi input
-        $request->validate(
-            [
+        try {
+            // Validasi input
+            $request->validate([
                 'text-complaint' => 'required|string|max:255',
                 'lokasi' => 'required|string|max:255',
                 'gambar' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-            ],
-            [
-                'text-complaint.required' => 'Kolom teks aduan wajib diisi.',
-                'lokasi.required' => 'Kolom lokasi wajib diisi.',
-                'gambar.image' => 'File harus berupa gambar.',
-                'gambar.mimes' => 'Format file yang diperbolehkan hanya jpeg, png, jpg, atau gif.',
-                'gambar.max' => 'Ukuran gambar tidak boleh lebih dari 2MB.',
-                'gambar.uploaded' => 'Gagal mengunggah file. Ukuran file mungkin melebihi batas maksimal.', // Tambahan untuk pesan "uploaded"
-            ]
-        );
+            ]);
 
-        try {
+            // Proses gambar (jika ada)
             $filename = null;
-
-            // Jika ada file gambar yang diunggah
             if ($request->hasFile('gambar')) {
                 $user = Auth::user();
                 $file = $request->file('gambar');
@@ -63,22 +52,118 @@ class UserController extends Controller
                 $file->storeAs('file-gambar', $filename, 'public');
             }
 
-            // Simpan data ke database
+            // Baca data dari file CSV
+            $situasiFile = public_path('dataset/situasi.csv'); // Path file situasi.csv
+            $tempatFile = public_path('dataset/tempat.csv');   // Path file tempat.csv
+            $vocabSituasi = $this->loadCsvSituasi($situasiFile);
+            $vocabTempat = $this->loadCsvTempat($tempatFile);
+
+            // Ekstrak kategori aduan
+            $textComplaint = $request->input('text-complaint');
+            $inputLokasi = $request->input('lokasi'); // Ambil lokasi dari input form
+            $categoryComplaint = $this->extractCategoryComplaint($textComplaint, $vocabSituasi, $vocabTempat, $inputLokasi);
+
+            // Simpan data aduan ke database
             Complaint::create([
                 'users_id' => Auth::id(),
-                'text_complaint' => $request->input('text-complaint'),
-                'type_complaint' => $this->getRandomComplaintType(), // Fungsi untuk mendapatkan tipe aduan secara acak
-                'lokasi' => $request->input('lokasi'),
+                'text_complaint' => $textComplaint,
+                'type_complaint' => $this->getRandomComplaintType(),
+                'category_complaint' => $categoryComplaint, // Tambahkan kategori aduan di sini
+                'lokasi' => $inputLokasi,
                 'status' => 'Aduan Masuk',
-                'gambar' => $filename, // Simpan nama file di database
+                'gambar' => $filename,
             ]);
 
-            // Redirect dengan pesan sukses
             return redirect()->back()->with('success-formComplaint', 'Aduan berhasil disimpan!');
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return redirect()->back()
+                ->withErrors($e->validator)
+                ->withInput()
+                ->with('error-formComplaint', 'Validasi gagal, cek inputan Anda.');
         } catch (\Exception $e) {
-            // Redirect dengan pesan error
-            return redirect()->back()->with('error-formComplaint', 'Terjadi kesalahan saat menyimpan aduan!');
+            return redirect()->back()->with('error-formComplaint', 'Terjadi kesalahan: ' . $e->getMessage());
         }
+    }
+
+
+    // Fungsi untuk membaca file CSV (situasi)
+    private function loadCsvSituasi($filePath)
+    {
+        $situasi = [];
+        if (($handle = fopen($filePath, "r")) !== false) {
+            $header = fgetcsv($handle, 1000, ",");
+            while (($row = fgetcsv($handle, 1000, ",")) !== false) {
+                $situasi[] = array_filter([$row[0], $row[1], $row[2], $row[3], $row[4], $row[5]]);
+            }
+            fclose($handle);
+        }
+        return $situasi;
+    }
+
+    // Fungsi untuk membaca file CSV (tempat)
+    private function loadCsvTempat($filePath)
+    {
+        $tempat = [];
+        if (($handle = fopen($filePath, "r")) !== false) {
+            $header = fgetcsv($handle, 1000, ",");
+            while (($row = fgetcsv($handle, 1000, ",")) !== false) {
+                $tempat[$row[1]] = array_filter([$row[1], $row[2], $row[3], $row[4], $row[5], $row[6]]);
+            }
+            fclose($handle);
+        }
+        return $tempat;
+    }
+
+    // Fungsi untuk mengekstraksi kategori aduan
+    private function extractCategoryComplaint($text, $vocabSituasi, $vocabTempat, $inputLokasi)
+    {
+        $situasi = [];
+        $tempat = [];
+
+        // Cari situasi
+        foreach ($vocabSituasi as $group) {
+            foreach ($group as $word) {
+                if (stripos($text, $word) !== false) {
+                    $situasi[] = $group[0]; // Gunakan istilah utama dari situasi
+                    break;
+                }
+            }
+        }
+
+        // Cari tempat berdasarkan sinonim dalam teks aduan
+        foreach ($vocabTempat as $location => $synonyms) {
+            foreach ($synonyms as $synonym) {
+                if (stripos($text, $synonym) !== false) {
+                    $tempat[] = $location; // Hanya tambahkan lokasi utama
+                    break; // Stop iterasi jika satu sinonim cocok
+                }
+            }
+        }
+
+        // Proses input lokasi (validasi dengan sinonim di vocabTempat)
+        if (!empty($inputLokasi)) {
+            foreach ($vocabTempat as $location => $synonyms) {
+                foreach ($synonyms as $synonym) {
+                    if (stripos($inputLokasi, $synonym) !== false) {
+                        $tempat[] = $location; // Tambahkan lokasi yang valid
+                        break 2; // Stop iterasi setelah lokasi cocok
+                    }
+                }
+            }
+        }
+
+        // Prioritaskan lokasi dari teks aduan
+        if (empty($tempat)) {
+            $tempat[] = $inputLokasi; // Jika tidak ditemukan lokasi valid, gunakan input mentah
+        } else {
+            $tempat = [reset($tempat)]; // Ambil lokasi pertama dari hasil pencarian
+        }
+
+        // Gabungkan kategori
+        $situasiStr = implode(', ', array_unique($situasi));
+        $tempatStr = implode(', ', array_unique($tempat));
+
+        return $situasiStr . ($tempatStr ? ", " . $tempatStr : '');
     }
 
 

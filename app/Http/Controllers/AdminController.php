@@ -195,30 +195,44 @@ class AdminController extends Controller
         foreach ($vocabSituasi as $group) {
             foreach ($group as $word) {
                 if (stripos($text, $word) !== false) {
-                    $situasi[] = $group[0];
+                    $situasi[] = $group[0]; // Gunakan istilah utama dari situasi
                     break;
                 }
             }
         }
 
-        // Cari tempat
-        foreach ($vocabTempat as $key => $synonyms) {
+        // Cari tempat berdasarkan sinonim dalam teks aduan
+        foreach ($vocabTempat as $location => $synonyms) {
             foreach ($synonyms as $synonym) {
                 if (stripos($text, $synonym) !== false) {
-                    $tempat[] = $key;
-                    break;
+                    $tempat[] = $location; // Hanya tambahkan lokasi utama
+                    break; // Stop iterasi jika satu sinonim cocok
                 }
             }
         }
 
-        // Jika lokasi dari teks kosong, gunakan lokasi dari input
+        // Proses input lokasi (validasi dengan sinonim di vocabTempat)
+        if (!empty($inputLokasi)) {
+            foreach ($vocabTempat as $location => $synonyms) {
+                foreach ($synonyms as $synonym) {
+                    if (stripos($inputLokasi, $synonym) !== false) {
+                        $tempat[] = $location; // Tambahkan lokasi yang valid
+                        break 2; // Stop iterasi setelah lokasi cocok
+                    }
+                }
+            }
+        }
+
+        // Prioritaskan lokasi dari teks aduan
         if (empty($tempat)) {
-            $tempat[] = $inputLokasi;
+            $tempat[] = $inputLokasi; // Jika tidak ditemukan lokasi valid, gunakan input mentah
+        } else {
+            $tempat = [reset($tempat)]; // Ambil lokasi pertama dari hasil pencarian
         }
 
         // Gabungkan kategori
-        $situasiStr = implode(', ', $situasi);
-        $tempatStr = implode(', ', $tempat);
+        $situasiStr = implode(', ', array_unique($situasi));
+        $tempatStr = implode(', ', array_unique($tempat));
 
         return $situasiStr . ($tempatStr ? ", " . $tempatStr : '');
     }
@@ -248,21 +262,29 @@ class AdminController extends Controller
 
         // Perbarui semua aduan dengan kategori serupa dalam rentang waktu 3 jam
         if ($complaint->category_complaint && $complaint->created_at) {
-            // Pastikan category_complaint dan created_at ada
             $startTime = $complaint->created_at->subHours(3); // Rentang 3 jam ke belakang
             $endTime = $complaint->created_at->addHours(3);  // Rentang 3 jam ke depan
 
             // Pisahkan kategori menjadi array untuk pencocokan fleksibel
-            $categories = array_map('trim', explode(',', $complaint->category_complaint));
+            $baseCategories = array_map('trim', explode(',', $complaint->category_complaint));
 
-            Complaint::where(function ($query) use ($categories) {
-                foreach ($categories as $category) {
-                    $query->orWhere('category_complaint', 'LIKE', "%$category%");
+            // Cari aduan lain dengan kategori dan rentang waktu yang sesuai
+            $similarComplaints = Complaint::where('id', '!=', $complaint->id)
+                ->whereBetween('created_at', [$startTime, $endTime])
+                ->get();
+
+            foreach ($similarComplaints as $similar) {
+                $compareCategories = array_map('trim', explode(',', $similar->category_complaint));
+
+                // Hitung jumlah kata yang sama
+                $commonWords = array_intersect($baseCategories, $compareCategories);
+
+                // Jika minimal 2 kata sama, perbarui status
+                if (count($commonWords) >= 2) {
+                    $similar->status = $request->status;
+                    $similar->save();
                 }
-            })
-                ->where('id', '!=', $complaint->id) // Hindari memperbarui data yang sama
-                ->whereBetween('created_at', [$startTime, $endTime]) // Filter rentang waktu 3 jam
-                ->update(['status' => $request->status]);
+            }
         }
 
         return response()->json([
@@ -432,8 +454,6 @@ class AdminController extends Controller
     // Mengupdate data value
     public function newSetValue(Request $request)
     {
-        // Log data request untuk memastikan kita menerima data yang benar
-        Log::info('Received data:', $request->all());
 
         // Validasi data yang diterima
         $validated = $request->validate([
@@ -445,8 +465,14 @@ class AdminController extends Controller
         $konteks = $validated['konteks'];
         $newData = json_decode($validated['value'], true);
 
-        // Log data setelah decode
-        Log::info('Decoded value:', $newData);
+        // Validasi nilai dalam $newData (semua nilai harus angka antara 0 dan 1)
+        foreach ($newData as $key => $value) {
+            if (!is_numeric($value) || $value < 0 || $value > 1) {
+                return response()->json([
+                    'message' => "Invalid value for key '$key'. Values must be numeric and between 0 and 1."
+                ], 400);
+            }
+        }
 
         // Mencari data berdasarkan konteks
         $setValue = SetValue::where('konteks', $konteks)->first();
@@ -486,9 +512,9 @@ class AdminController extends Controller
     {
         $validated = $request->validate([
             'konteks' => 'required|string',
-            'key' => 'required|string', // Original key
-            'new_key' => 'required|string', // New key
-            'new_value' => 'required|string', // New value
+            'key' => 'required|string',       // Original key
+            'new_key' => 'required|string',  // New key
+            'new_value' => 'required|numeric|min:0|max:1', // New value harus angka antara 0 dan 1
         ]);
 
         $setValue = SetValue::where('konteks', $validated['konteks'])->first();
@@ -496,18 +522,18 @@ class AdminController extends Controller
         if ($setValue) {
             $currentValue = json_decode($setValue->value, true);
 
-            // If the new key is different from the old key, check if the new key already exists
+            // Jika new_key berbeda dengan key lama, cek apakah new_key sudah ada
             if ($validated['new_key'] !== $validated['key'] && isset($currentValue[$validated['new_key']])) {
                 return response()->json(['message' => 'The new key already exists!'], 400); // Conflict error
             }
 
-            // Check if old key exists, then update it
+            // Cek apakah key lama ada, lalu perbarui
             if (isset($currentValue[$validated['key']])) {
-                // Remove old key and add the new key with the new value
+                // Hapus key lama dan tambahkan new_key dengan nilai baru
                 unset($currentValue[$validated['key']]);
                 $currentValue[$validated['new_key']] = $validated['new_value'];
 
-                // Update the value with the new key and value
+                // Perbarui nilai dengan key dan value baru
                 $setValue->value = json_encode($currentValue);
                 $setValue->save();
 
@@ -519,8 +545,6 @@ class AdminController extends Controller
             return response()->json(['message' => 'Data not found!'], 404);
         }
     }
-
-
     // Menghapus data
     public function deleteSetValue(Request $request)
     {
@@ -537,6 +561,13 @@ class AdminController extends Controller
             // Remove specific key
             if (isset($currentValue[$validated['key']])) {
                 unset($currentValue[$validated['key']]);
+
+                // Jika data kosong setelah penghapusan, set value menjadi objek kosong {}
+                if (empty($currentValue)) {
+                    $currentValue = new \stdClass();  // Menggunakan \stdClass tanpa namespace
+                }
+
+                // Update nilai value dengan data baru
                 $setValue->value = json_encode($currentValue);
                 $setValue->save();
 

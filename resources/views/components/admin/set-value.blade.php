@@ -148,7 +148,7 @@
             <div id="new-value-form">
                 <label>Key</label>
                 <input type="text" id="new-key" class="form-control">
-                <label>Value</label>
+                <label>Value (0-1)</label>
                 <input type="text" id="new-value" class="form-control">
                 <div class="my-3 d-flex justify-content-center">
                     <button class="btn btn-success px-5" id="save-new-value">Save</button>
@@ -256,6 +256,8 @@
                                     icon: 'error',
                                     title: 'Error',
                                     text: 'The key already exists.',
+                                    toast: true,
+                                    position: 'top-end',
                                     showConfirmButton: false,
                                     timer: 2000 // 2 seconds
                                 });
@@ -265,7 +267,9 @@
                                     icon: 'success',
                                     title: 'Success',
                                     text: response.message,
-                                    showConfirmButton: false, // Hides the confirm button
+                                    toast: true,
+                                    position: 'top-end',
+                                    showConfirmButton: false,
                                     timer: 2000 // Automatically closes after 2 seconds
                                 });
 
@@ -280,6 +284,8 @@
                                 icon: 'error',
                                 title: 'Error',
                                 text: 'An error occurred while saving data.',
+                                toast: true,
+                                position: 'top-end',
                                 showConfirmButton: false,
                                 timer: 2000 // Automatically closes after 2 seconds
                             });
@@ -290,6 +296,8 @@
                         icon: 'warning',
                         title: 'Warning',
                         text: 'Please fill both fields.',
+                        toast: true,
+                        position: 'top-end',
                         showConfirmButton: false, // Hides the confirm button
                         timer: 2000 // Automatically closes after 2 seconds
                     });
@@ -299,12 +307,13 @@
                     icon: 'warning',
                     title: 'Warning',
                     text: 'Please fill both fields.',
+                    toast: true,
+                    position: 'top-end',
                     showConfirmButton: false, // Hides the confirm button
                     timer: 2000 // Automatically closes after 2 seconds
                 });
             }
         });
-
 
         // Fungsi untuk mengambil dan menampilkan data dalam bentuk tabel
         loadData('Waktu');
@@ -366,7 +375,7 @@
                         // Hancurkan DataTable jika sudah ada
                         if ($.fn.dataTable.isDataTable(`#data-table-${konteks}`)) {
                             $(`#data-table-${konteks}`).DataTable()
-                        .destroy(); // Hancurkan DataTable yang ada
+                                .destroy(); // Hancurkan DataTable yang ada
                         }
 
                         // Inisialisasi DataTable setelah data dimuat
@@ -456,41 +465,51 @@
                     new_value: newValue
                 }, function(response) {
                     if (response.message === 'The new key already exists!') {
-                        // Show Swal.fire alert if new key already exists
+                        // Show Toast error if new key already exists
                         Swal.fire({
                             icon: 'error',
                             title: 'Error',
                             text: 'The new key already exists!',
+                            toast: true,
+                            position: 'top-end',
                             showConfirmButton: false,
-                            timer: 2000 // 2 seconds
+                            timer: 2000, // 2 seconds
                         });
                     } else {
-                        // Use Swal.fire for success alert with no confirmation
+                        // Show Toast success alert
                         Swal.fire({
                             icon: 'success',
                             title: response.message,
+                            toast: true,
+                            position: 'top-end',
                             showConfirmButton: false,
-                            timer: 2000 // 2 seconds
+                            timer: 2000, // 2 seconds
                         });
 
                         loadData(konteks); // Reload data after update
                     }
                 }).fail(function(xhr, status, error) {
+                    // Show Toast error if fail
                     Swal.fire({
                         icon: 'error',
                         title: 'Error',
                         text: 'An error occurred while updating data.',
+                        toast: true,
+                        position: 'top-end',
                         showConfirmButton: false,
-                        timer: 2000 // 2 seconds
+                        timer: 2000, // 2 seconds
                     });
                 });
             } else {
+                // Show Toast error if key or value is empty
                 Swal.fire({
                     icon: 'error',
                     title: 'Error',
                     text: 'Key and value cannot be empty',
+                    toast: true,
+                    position: 'top-end',
                     showConfirmButton: false,
-                    timer: 2000 // 2 seconds
+                    timer: 2000, // 2 seconds
                 });
             }
         });
