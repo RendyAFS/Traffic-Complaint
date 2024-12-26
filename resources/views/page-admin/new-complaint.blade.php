@@ -14,7 +14,7 @@
                             </div>
                             <div class="mb-3">
                                 <label for="lokasi" class="form-label fw-bold">Masukkan Lokasi</label>
-                                <input type="text" class="form-control" id="lokasi" name="lokasi" required />
+                                <input type="text" class="form-control" id="lokasi" name="lokasi" placeholder="Masukkan Lokasi" required />
                             </div>
                         </div>
                         <div class="col-lg-6">
@@ -26,7 +26,7 @@
                         </div>
                     </div>
                     <div class="d-flex justify-content-center flex-row">
-                        <a href="{{ route('admin.index') }}" class="btn btnc-red me-2"><i class="bi bi-x-circle-fill"></i>
+                        <a href="{{ route('admin.new.complaint') }}" class="btn btnc-red me-2"><i class="bi bi-x-circle-fill"></i>
                             Reset</a>
                         <button type="submit" class="btn btnc-green"><i class="bi bi-floppy-fill"></i> Simpan</button>
                     </div>
